@@ -1,1 +1,2015 @@
+<!doctype html>
+<html lang="km" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>កត់ចំណងដៃ — កម្មវិធីកត់ត្រា និងរបាយការណ៍</title>
+<meta name="description" content="កម្មវិធីកត់ចំណងដៃ៖ កត់ត្រាភ្ញៀវ រៀល/ដុល្លារ របាយការណ៍តាមទីកន្លែង Export Excel/PDF បញ្ចូលទិន្នន័យរួម គ្រប់គ្រង Database ដំឡើងបានលើ Desktop និងទូរស័ព្ទ (PWA)។">
+<meta name="theme-color" content="#ffffff">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="កត់ចំណងដៃ">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nokora:wght@400;500;600;700&family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+<style>/* ================= កម្មវិធីកត់ចំណងដៃ — Design System ================= */
+:root{
+  --accent:#6366f1; --accent-strong:color-mix(in srgb, var(--accent) 82%, #000);
+  --accent-soft:color-mix(in srgb, var(--accent) 14%, #fff);
+  --accent-contrast:#ffffff;
+  --bg:#f3f4f8; --card:#ffffff; --text:#17203a; --muted:#667089;
+  --border:#e3e6ef; --ok:#16a34a; --warn:#d97706; --danger:#dc2626;
+  --shadow:0 1px 2px rgba(23,32,58,.06),0 8px 24px -12px rgba(23,32,58,.18);
+  --radius:14px;
+}
+html[data-theme="dark"]{
+  --bg:#0d1220; --card:#161d31; --text:#e6e9f4; --muted:#94a0bd;
+  --border:#273052; --accent-soft:color-mix(in srgb, var(--accent) 26%, #161d31);
+  --shadow:0 1px 2px rgba(0,0,0,.5),0 10px 28px -14px rgba(0,0,0,.7);
+  --ok:#4ade80; --warn:#fbbf24; --danger:#f87171;
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+html[data-fs="sm"]{font-size:14px} html[data-fs="lg"]{font-size:18.5px}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Nokora","Khmer OS Battambang","Battambang","Noto Sans Khmer","Leelawadee UI",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  background:var(--bg); color:var(--text); line-height:1.55; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit}
 
+/* ---------- shell ---------- */
+.shell{display:flex;min-height:100vh}
+.side{
+  width:248px;flex:0 0 auto;background:var(--card);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;gap:4px;padding:18px 12px;position:sticky;top:0;height:100vh;
+}
+.brand{display:flex;align-items:center;gap:10px;padding:6px 8px 16px}
+.brand .logo{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-strong));
+  display:grid;place-items:center;flex:0 0 auto;box-shadow:var(--shadow)}
+.brand h1{font-size:1.02rem;margin:0;font-weight:700}
+.brand small{color:var(--muted);font-size:.72rem}
+.nav-btn{
+  display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border:0;border-radius:11px;
+  background:transparent;color:var(--muted);font-size:.95rem;cursor:pointer;text-align:left;font-weight:600;
+}
+.nav-btn svg{flex:0 0 auto}
+.nav-btn:hover{background:color-mix(in srgb,var(--text) 5%,transparent);color:var(--text)}
+.nav-btn.on{background:var(--accent);color:var(--accent-contrast);box-shadow:var(--shadow)}
+.nav-btn.on svg{stroke:#fff}
+.side-foot{margin-top:auto;padding:10px 8px;color:var(--muted);font-size:.72rem;border-top:1px dashed var(--border)}
+.main{flex:1;min-width:0;padding:22px 26px 90px;max-width:1280px;margin:0 auto;width:100%}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.topbar h2{margin:0;font-size:1.3rem}
+.topbar .sub{color:var(--muted);font-size:.85rem}
+
+/* ---------- cards / stats ---------- */
+.grid{display:grid;gap:14px}
+.stats{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:16px 18px}
+.stat{display:flex;gap:13px;align-items:center}
+.stat .ic{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center;flex:0 0 auto}
+.stat .ic svg{stroke:var(--accent-strong)}
+.stat .k{color:var(--muted);font-size:.78rem;margin:0}
+.stat .v{font-size:1.16rem;font-weight:800;margin:0;letter-spacing:.2px;white-space:nowrap}
+.stat .v small{font-weight:600;color:var(--muted);font-size:.72rem}
+.card-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 12px;flex-wrap:wrap}
+.card-h h3{margin:0;font-size:1rem}
+.card-h .hint{color:var(--muted);font-size:.78rem}
+
+/* ---------- buttons & inputs ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--border);
+  background:var(--card);color:var(--text);padding:9px 15px;border-radius:11px;cursor:pointer;font-size:.9rem;font-weight:700;
+  transition:filter .15s, transform .05s;
+}
+.btn:hover{filter:brightness(.96)} html[data-theme="dark"] .btn:hover{filter:brightness(1.2)}
+.btn:active{transform:scale(.98)}
+.btn.pri{background:var(--accent);border-color:transparent;color:var(--accent-contrast)}
+.btn.ghost{background:transparent}
+.btn.danger{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 35%,var(--border))}
+.btn.danger-fill{background:var(--danger);border-color:transparent;color:#fff}
+.btn.sm{padding:5px 10px;font-size:.8rem;border-radius:9px}
+.btn.icon{padding:7px;border-radius:10px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label{font-size:.78rem;color:var(--muted);font-weight:600}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=url],input[type=tel],select,textarea{
+  border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:10px;padding:9px 11px;
+  font-size:.92rem;font-family:inherit;outline:none;width:100%;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.search{position:relative;flex:1;min-width:200px;max-width:420px}
+.search svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);stroke:var(--muted)}
+.search input{padding-left:36px}
+.row{display:flex;gap:10px;align-items:end;flex-wrap:wrap}
+.row select{min-width:128px;flex:0 1 auto}
+.row.wrap{flex-wrap:wrap}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid var(--border);background:var(--card);border-radius:999px;padding:6px 13px;font-size:.8rem;cursor:pointer;color:var(--muted);font-weight:600}
+.chip.on{background:var(--accent);color:var(--accent-contrast);border-color:transparent}
+.chip.badge-khr,.badge{border-radius:999px;padding:2px 9px;font-size:.72rem;font-weight:700;background:var(--accent-soft);color:var(--accent-strong);white-space:nowrap}
+.badge.new{background:rgba(22,163,74,.14);color:var(--ok)}
+.badge.dup{background:rgba(217,119,6,.15);color:var(--warn)}
+.badge.bad{background:rgba(220,38,38,.12);color:var(--danger)}
+
+/* ---------- switch ---------- */
+.sw{position:relative;width:44px;height:24px;flex:0 0 auto;cursor:pointer}
+.sw input{opacity:0;width:0;height:0}
+.sw i{position:absolute;inset:0;background:var(--border);border-radius:99px;transition:.2s}
+.sw i:after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:#fff;top:3px;left:3px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked + i{background:var(--accent)}
+.sw input:checked + i:after{left:23px}
+
+/* ---------- tables ---------- */
+.tbl-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+table.tbl{width:100%;border-collapse:collapse;font-size:.87rem;min-width:640px;background:var(--card)}
+.tbl th{background:color-mix(in srgb,var(--text) 4.5%,var(--card));color:var(--muted);font-size:.76rem;text-transform:none;
+  padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;position:sticky;top:0}
+.tbl td{padding:9px 12px;border-bottom:1px solid color-mix(in srgb,var(--border) 60%,transparent);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:0}
+.tbl tbody tr:hover{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.tbl tfoot td{font-weight:800;background:color-mix(in srgb,var(--text) 4.5%,var(--card));border-top:2px solid var(--border)}
+.pager{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;flex-wrap:wrap;color:var(--muted);font-size:.82rem}
+.empty{padding:44px 16px;text-align:center;color:var(--muted)}
+.empty svg{stroke:var(--muted);opacity:.55;margin-bottom:8px}
+
+/* ---------- modal / toast ---------- */
+.ovl{position:fixed;inset:0;background:rgba(10,14,26,.55);display:none;align-items:flex-start;justify-content:center;padding:5vh 14px;z-index:60;overflow:auto;backdrop-filter:blur(2px)}
+.ovl.on{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);width:100%;max-width:660px;padding:20px 22px;animation:pop .18s ease}
+@keyframes pop{from{transform:translateY(10px) scale(.98);opacity:.6}to{transform:none;opacity:1}}
+.modal h3{margin:0 0 14px;font-size:1.05rem}
+.form-grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+#toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:26px;z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none}
+.toast{background:var(--text);color:var(--bg);border-radius:11px;padding:10px 18px;font-size:.86rem;font-weight:600;box-shadow:var(--shadow);max-width:92vw;animation:pop .2s ease}
+.toast.ok{background:var(--ok);color:#fff}.toast.err{background:var(--danger);color:#fff}
+
+/* ---------- misc ---------- */
+.tabs{display:flex;gap:6px;background:color-mix(in srgb,var(--text) 5%,var(--card));border:1px solid var(--border);padding:4px;border-radius:12px;width:max-content;max-width:100%;overflow:auto}
+.tabs button{border:0;background:transparent;padding:7px 14px;border-radius:9px;cursor:pointer;font-weight:700;font-size:.83rem;color:var(--muted);white-space:nowrap}
+.tabs button.on{background:var(--card);color:var(--accent-strong);box-shadow:var(--shadow)}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;outline:1px solid rgba(0,0,0,.08)}
+.swatch.on{border-color:var(--card);outline:3px solid var(--text)}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--border);font-size:.9rem}
+.kv:last-child{border-bottom:0}
+.kv b{font-variant-numeric:tabular-nums}
+.drop{border:2px dashed var(--border);border-radius:14px;padding:34px 16px;text-align:center;color:var(--muted);cursor:pointer;transition:.15s;background:var(--card)}
+.drop:hover,.drop.hot{border-color:var(--accent);background:var(--accent-soft);color:var(--text)}
+.progress{height:8px;border-radius:99px;background:color-mix(in srgb,var(--text) 8%,transparent);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .25s}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:var(--muted);margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.qr-box{display:grid;place-items:center;padding:14px;background:#fff;border-radius:14px;border:1px solid var(--border)}
+.qr-box svg{max-width:260px;height:auto}
+.muted{color:var(--muted)} .small{font-size:.78rem} .center{text-align:center}
+.mono{font-variant-numeric:tabular-nums}
+
+/* ---------- mobile ---------- */
+.tabbar{display:none}
+@media (max-width:840px){
+  .shell{display:block}
+  .side{display:none}
+  .main{padding:14px 12px 96px}
+  .tabbar{
+    display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--card);
+    border-top:1px solid var(--border);padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+  }
+  .tabbar button{flex:1;border:0;background:none;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.68rem;font-weight:700;padding:6px 2px;border-radius:10px;cursor:pointer}
+  .tabbar button.on{color:var(--accent-strong);background:var(--accent-soft)}
+  .stats{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat{padding:12px 13px;gap:10px}
+  .stat .v{font-size:1rem}
+  .stat .ic{width:36px;height:36px}
+  .topbar h2{font-size:1.12rem}
+  .hide-sm{display:none}
+}
+mark{background:var(--accent-soft)}
+/* ---------- print ---------- */
+#printRoot{display:none}
+@media print{
+  body>*{display:none!important}
+  body{background:#fff!important;color:#000!important}
+  body>#printRoot{display:block!important}
+  #printRoot{font-family:"Nokora","Khmer OS Battambang","Battambang","Noto Sans Khmer",sans-serif;color:#000}
+  #printRoot table{width:100%;border-collapse:collapse;font-size:12px}
+  #printRoot th,#printRoot td{border:1px solid #999;padding:5px 7px;text-align:left}
+  #printRoot th{background:#eee}
+  #printRoot .num{text-align:right}
+}
+.print-doc{max-width:800px;margin:0 auto;padding:10px 6px}
+.print-doc h1{font-size:20px;text-align:center;margin:4px 0}
+.print-doc .sub{text-align:center;color:#444;font-size:13px;margin-bottom:2px}
+.print-doc h2{font-size:15px;margin:18px 0 6px}
+.print-doc .meta{display:flex;justify-content:space-between;font-size:12px;color:#333;margin:10px 0}
+.print-doc .sum{display:flex;gap:14px;flex-wrap:wrap;margin:10px 0}
+.print-doc .sum div{border:1px solid #999;border-radius:8px;padding:8px 14px;font-size:13px}
+.print-doc .sign{display:flex;justify-content:space-between;margin-top:46px;font-size:13px;text-align:center;width:100%}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="side">
+    <div class="brand">
+      <div class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.6-9.3-9A5.4 5.4 0 0 1 12 6.6 5.4 5.4 0 0 1 21.3 12C19 16.4 12 21 12 21Z"/></svg>
+      </div>
+      <div><h1>កត់ចំណងដៃ</h1><small>កត់ត្រា · របាយការណ៍ · PWA</small></div>
+    </div>
+    <button class="nav-btn on" data-view="record"><span data-icon="record"></span>កត់ចំណងដៃ</button>
+    <button class="nav-btn" data-view="report"><span data-icon="report"></span>របាយការណ៍</button>
+    <button class="nav-btn" data-view="merge"><span data-icon="merge"></span>បញ្ចូលទិន្នន័យរួម</button>
+    <button class="nav-btn" data-view="settings"><span data-icon="settings"></span>ការកំណត់</button>
+    <div class="side-foot">ទិន្នន័យរក្សាទុកក្នុងឧបករណ៍របស់អ្នក (Offline) · v1.0</div>
+  </aside>
+  <main class="main"><div id="view"></div></main>
+</div>
+<nav class="tabbar">
+  <button class="on" data-view="record"><span data-icon="record"></span>កត់ចំណងដៃ</button>
+  <button data-view="report"><span data-icon="report"></span>របាយការណ៍</button>
+  <button data-view="merge"><span data-icon="merge"></span>បញ្ចូលរួម</button>
+  <button data-view="settings"><span data-icon="settings"></span>ការកំណត់</button>
+</nav>
+<div class="ovl" id="modalHost"></div>
+<div id="toasts"></div>
+<div id="printRoot"></div>
+<script>/* ===== qr.js ===== */
+/* =============================================================
+ * KCD.qr — Byte-mode QR Code encoder (ISO/IEC 18004)
+ * វersions 1–10, ECC L/M/Q/H, auto mask selection.
+ * No external dependency. Works in browser + node (for tests).
+ * ============================================================= */
+(function (root, factory) {
+  var mod = factory();
+  if (typeof module !== 'undefined' && module.exports) module.exports = mod;
+  if (root) root.KCD = root.KCD || {}, root.KCD.qr = mod;
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  // per version: total codewords, and per ECC level:
+  //   [eccPerBlock, grp1Total, grp1Data, grp1Count, (grp2Total, grp2Data, grp2Count)?]
+  var SPEC = {
+    1:  { total: 26,  L: [7, 26, 19, 1], M: [10, 26, 16, 1], Q: [13, 26, 13, 1], H: [17, 26, 9, 1] },
+    2:  { total: 44,  L: [10, 44, 34, 1], M: [16, 44, 28, 1], Q: [22, 44, 22, 1], H: [28, 44, 16, 1] },
+    3:  { total: 70,  L: [15, 70, 55, 1], M: [26, 70, 44, 1], Q: [18, 35, 17, 2], H: [22, 35, 13, 2] },
+    4:  { total: 100, L: [20, 100, 80, 1], M: [18, 50, 32, 2], Q: [26, 50, 24, 2], H: [16, 25, 9, 4] },
+    5:  { total: 134, L: [26, 134, 108, 1], M: [24, 67, 43, 2], Q: [18, 33, 15, 2, 34, 16, 2], H: [22, 33, 11, 2, 34, 12, 2] },
+    6:  { total: 172, L: [18, 86, 68, 2], M: [16, 43, 27, 4], Q: [24, 43, 19, 4], H: [28, 43, 15, 4] },
+    7:  { total: 196, L: [20, 98, 78, 2], M: [18, 49, 31, 4], Q: [18, 32, 14, 2, 33, 15, 4], H: [26, 39, 13, 4, 40, 14, 1] },
+    8:  { total: 242, L: [24, 121, 97, 2], M: [22, 60, 38, 2, 61, 39, 2], Q: [22, 40, 18, 4, 41, 19, 2], H: [26, 40, 14, 4, 41, 15, 2] },
+    9:  { total: 292, L: [30, 146, 116, 2], M: [22, 58, 36, 3, 59, 37, 2], Q: [20, 36, 16, 4, 37, 17, 4], H: [24, 36, 12, 4, 37, 13, 4] },
+    10: { total: 346, L: [18, 86, 68, 2, 87, 69, 2], M: [26, 69, 43, 4, 70, 44, 1], Q: [24, 43, 19, 6, 44, 20, 2], H: [28, 43, 15, 6, 44, 16, 2] }
+  };
+  var ALIGN = { 2: [6, 18], 3: [6, 22], 4: [6, 26], 5: [6, 30], 6: [6, 34], 7: [6, 22, 38], 8: [6, 24, 42], 9: [6, 26, 46], 10: [6, 28, 50] };
+  var ECC_BITS = { L: 1, M: 0, Q: 3, H: 2 };
+  var ECC_ORDER = ['L', 'M', 'Q', 'H'];
+
+  /* ---------- GF(256) ---------- */
+  var EXP = new Uint8Array(512), LOG = new Uint8Array(256);
+  (function () {
+    var x = 1;
+    for (var i = 0; i < 255; i++) { EXP[i] = x; LOG[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d; }
+    for (var j = 255; j < 512; j++) EXP[j] = EXP[j - 255];
+  })();
+  function gmul(a, b) { return (a === 0 || b === 0) ? 0 : EXP[LOG[a] + LOG[b]]; }
+
+  function genPoly(deg) {
+    var poly = [1];
+    for (var i = 0; i < deg; i++) {
+      var next = new Array(poly.length + 1).fill(0);
+      for (var j = 0; j < poly.length; j++) {
+        next[j] ^= poly[j];                      // * x
+        next[j + 1] ^= gmul(poly[j], EXP[i]);     // * a^i
+      }
+      poly = next;
+    }
+    return poly;
+  }
+  function ecBytes(data, deg) {
+    var gen = genPoly(deg), rem = gen.slice(1).map(function () { return 0; });
+    for (var i = 0; i < data.length; i++) {
+      var factor = data[i] ^ rem[0];
+      rem.shift(); rem.push(0);
+      for (var j = 0; j < rem.length; j++) rem[j] ^= gmul(gen[j + 1], factor);
+    }
+    return rem;
+  }
+
+  /* ---------- capacity ---------- */
+  function groups(ver, ecc) {                 // -> { ec, list:[{total,data,count}] }
+    var a = SPEC[ver][ecc], list = [];
+    for (var i = 1; i < a.length; i += 3) list.push({ total: a[i], data: a[i + 1], count: a[i + 2] });
+    return { ec: a[0], list: list };
+  }
+  function dataCodewords(ver, ecc) {
+    return groups(ver, ecc).list.reduce(function (s, g) { return s + g.data * g.count; }, 0);
+  }
+  function pickVersion(byteLen, ecc) {
+    for (var v = 1; v <= 10; v++) {
+      var cc = v <= 9 ? 8 : 16;                 // char-count indicator bits
+      if (4 + cc + byteLen * 8 <= dataCodewords(v, ecc) * 8) return { version: v, ccBits: cc };
+    }
+    return null;
+  }
+
+  /* ---------- bit stream ---------- */
+  function buildBits(bytes, ver, ecc) {
+    var info = pickVersion(bytes.length, ecc);
+    if (!info) return null;
+    var total = dataCodewords(info.version, ecc);
+    var bits = [];
+    function push(val, len) { for (var i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); }
+    push(4, 4);                                  // byte mode
+    push(bytes.length, info.ccBits);
+    for (var i = 0; i < bytes.length; i++) push(bytes[i], 8);
+    push(0, Math.min(4, total * 8 - bits.length));
+    while (bits.length % 8) bits.push(0);
+    var out = [];
+    for (var b = 0; b < bits.length; b += 8) { var v = 0; for (var k = 0; k < 8; k++) v = (v << 1) | bits[b + k]; out.push(v); }
+    var pad = [0xec, 0x11], pi = 0;
+    while (out.length < total) out.push(pad[pi++ % 2]);
+    return { version: info.version, data: out };
+  }
+
+  /* ---------- block interleaving ---------- */
+  function interleave(data, ver, ecc) {
+    var g = groups(ver, ecc), eccLen = g.ec;
+    var blocks = [], ecs = [], p = 0;
+    g.list.forEach(function (grp) {
+      for (var i = 0; i < grp.count; i++) {
+        var blk = data.slice(p, p + grp.data); p += grp.data;
+        blocks.push(blk); ecs.push(ecBytes(blk, eccLen));
+      }
+    });
+    var maxData = blocks.reduce(function (m, b) { return Math.max(m, b.length); }, 0);
+    var out = [];
+    for (var c = 0; c < maxData; c++) for (var b = 0; b < blocks.length; b++) if (c < blocks[b].length) out.push(blocks[b][c]);
+    for (var c2 = 0; c2 < eccLen; c2++) for (var b2 = 0; b2 < blocks.length; b2++) out.push(ecs[b2][c2]);
+    return out;
+  }
+
+  /* ---------- matrix ---------- */
+  function placeFinder(m, res, row, col, size) {
+    for (var r = -1; r <= 7; r++) for (var c = -1; c <= 7; c++) {
+      var rr = row + r, cc = col + c;
+      if (rr < 0 || rr >= size || cc < 0 || cc >= size) continue;
+      var inBox = r >= 0 && r <= 6 && c >= 0 && c <= 6;
+      var dark = inBox && ((r === 0 || r === 6 || c === 0 || c === 6) || (r >= 2 && r <= 4 && c >= 2 && c <= 4));
+      m[rr][cc] = dark ? 1 : 0; res[rr][cc] = 1;
+    }
+  }
+  function newMatrix(ver) {
+    var size = ver * 4 + 17;
+    var m = [], res = [];
+    for (var i = 0; i < size; i++) { m.push(new Array(size).fill(0)); res.push(new Array(size).fill(0)); }
+    return { m: m, res: res, size: size };
+  }
+  function buildMatrix(cw, ver) {
+    var M = newMatrix(ver), m = M.m, res = M.res, size = M.size;
+    placeFinder(m, res, 0, 0, size); placeFinder(m, res, 0, size - 7, size); placeFinder(m, res, size - 7, 0, size);
+    for (var i = 8; i < size - 8; i++) {          // timing
+      var v = (i + 1) % 2 ? 1 : 0;               // i even -> dark
+      m[6][i] = i % 2 === 0 ? 1 : 0; res[6][i] = 1;
+      m[i][6] = i % 2 === 0 ? 1 : 0; res[i][6] = 1;
+    }
+    var AP = ALIGN[ver] || [];                     // alignment: skip only the 3 finder corners
+    for (var ai = 0; ai < AP.length; ai++) for (var aj = 0; aj < AP.length; aj++) {
+      var corner = (ai === 0 && aj === 0) || (ai === 0 && aj === AP.length - 1) || (ai === AP.length - 1 && aj === 0);
+      if (corner) continue;
+      var ar = AP[ai], ac = AP[aj];
+      for (var r = -2; r <= 2; r++) for (var c = -2; c <= 2; c++) {
+        var d = Math.max(Math.abs(r), Math.abs(c));
+        m[ar + r][ac + c] = (d !== 1) ? 1 : 0; res[ar + r][ac + c] = 1;
+      }
+    }
+    // format reserve + dark module
+    for (var k = 0; k <= 8; k++) { if (k !== 6) { res[8][k] = 1; res[k][8] = 1; } }
+    for (var t = 0; t < 8; t++) { res[8][size - 1 - t] = 1; res[size - 1 - t][8] = 1; }
+    res[size - 8][8] = 1; // dark module is written in applyFormat
+    if (ver >= 7) {                               // version reserve
+      for (var a = 0; a < 6; a++) for (var b = 0; b < 3; b++) { res[a][size - 11 + b] = 1; res[size - 11 + b][a] = 1; }
+    }
+    // data
+    var bit = 0, up = true;
+    var totalBits = cw.length * 8;
+    for (var col = size - 1; col > 0; col -= 2) {
+      if (col === 6) col--;
+      for (var rowN = 0; rowN < size; rowN++) {
+        var row = up ? size - 1 - rowN : rowN;
+        for (var cc = 0; cc < 2; cc++) {
+          var c2 = col - cc;
+          if (res[row][c2]) continue;
+          m[row][c2] = bit < totalBits ? ((cw[bit >>> 3] >>> (7 - (bit & 7))) & 1) : 0;
+          bit++;
+        }
+      }
+      up = !up;
+    }
+    return { m: m, res: res, size: size };
+  }
+
+  function bch15(data) { var d = data << 10; for (var i = 14; i >= 10; i--) if ((d >>> i) & 1) d ^= 0x537 << (i - 10); return ((data << 10) | d) ^ 0x5412; }
+  function bch18(v) { var d = v << 12; for (var i = 17; i >= 12; i--) if ((d >>> i) & 1) d ^= 0x1f25 << (i - 12); return (v << 12) | d; }
+
+  function applyFormat(m, res, size, ver, ecc, mask) {
+    m[size - 8][8] = 1; // always-dark module
+    var fmt = bch15((ECC_BITS[ecc] << 3) | mask);
+    for (var i = 0; i < 15; i++) {
+      var bit = (fmt >> i) & 1;
+      if (i < 6) m[i][8] = bit;
+      else if (i < 8) m[i + 1][8] = bit;
+      else if (i === 8) m[8][7] = bit;
+      else m[8][14 - i] = bit;
+      if (i < 8) m[8][size - 1 - i] = bit;
+      else m[size - 15 + i][8] = bit;
+    }
+    if (ver >= 7) {
+      var vt = bch18(ver);
+      for (var j = 0; j < 18; j++) {
+        var bb = (vt >> j) & 1, r = Math.floor(j / 3), c = j % 3;
+        m[r][size - 11 + c] = bb; m[size - 11 + c][r] = bb;
+      }
+    }
+  }
+
+  var MASKS = [
+    function (r, c) { return (r + c) % 2 === 0; },
+    function (r) { return r % 2 === 0; },
+    function (r, c) { return c % 3 === 0; },
+    function (r, c) { return (r + c) % 3 === 0; },
+    function (r, c) { return (Math.floor(r / 2) + Math.floor(c / 3)) % 2 === 0; },
+    function (r, c) { return (r * c) % 2 + (r * c) % 3 === 0; },
+    function (r, c) { return ((r * c) % 2 + (r * c) % 3) % 2 === 0; },
+    function (r, c) { return ((r + c) % 2 + (r * c) % 3) % 2 === 0; }
+  ];
+
+  function penalty(m, size) {
+    var p = 0, r, c, run, color;
+    for (r = 0; r < size; r++) {                   // rule 1 rows
+      run = 1;
+      for (c = 1; c < size; c++) { if (m[r][c] === m[r][c - 1]) { run++; if (run === 5) p += 3; else if (run > 5) p += 1; } else run = 1; }
+    }
+    for (c = 0; c < size; c++) {                   // rule 1 cols
+      run = 1;
+      for (r = 1; r < size; r++) { if (m[r][c] === m[r - 1][c]) { run++; if (run === 5) p += 3; else if (run > 5) p += 1; } else run = 1; }
+    }
+    for (r = 0; r < size - 1; r++) for (c = 0; c < size - 1; c++) {  // rule 2
+      color = m[r][c];
+      if (color === m[r][c + 1] && color === m[r + 1][c] && color === m[r + 1][c + 1]) p += 3;
+    }
+    // rule 3: 10111010000 / 00001011101 anywhere in any row/col (with the same
+    // horspool skip used by the reference implementations)
+    function chk(get, n) {
+      for (var i = 0; i < n; i++) {
+        for (var j = 0; j <= n - 11; j++) {
+          var g = function (k) { return get(i, j + k); };
+          if (!g(1) && g(4) && !g(5) && g(6) && !g(9) &&
+              ((g(0) && g(2) && g(3) && !g(7) && !g(8) && !g(10)) ||
+               (!g(0) && !g(2) && !g(3) && g(7) && g(8) && g(10)))) p += 40;
+          if (g(10)) j++;
+        }
+      }
+    }
+    chk(function (i, j) { return m[i][j]; }, size);
+    chk(function (i, j) { return m[j][i]; }, size);
+    var dark = 0;                                   // rule 4
+    for (r = 0; r < size; r++) for (c = 0; c < size; c++) dark += m[r][c];
+    var total = size * size;
+    p += Math.floor(Math.abs(dark * 100 / total - 50) / 5) * 10;
+    return p;
+  }
+
+  /* ---------- public API ---------- */
+  function encode(text, ecc) {
+    ecc = (ecc || 'M').toUpperCase();
+    if (!ECC_BITS[ecc]) ecc = 'M';
+    var u8 = new TextEncoder().encode(String(text == null ? '' : text));
+    var bytes = Array.prototype.slice.call(u8);
+    var sel = pickVersion(bytes.length, ecc);
+    if (!sel) { var e = new Error('CONTENT_TOO_LONG'); e.max = dataCodewords(10, ecc) - 2; throw e; }
+    var info = buildBits(bytes, sel.version, ecc);
+    if (!info) { throw new Error('CONTENT_TOO_LONG'); }
+    var cw = interleave(info.data, info.version, ecc);
+    var base = buildMatrix(cw, info.version);
+    var best = null;
+    // ZXing / python-qrcode convention: score masks BEFORE format bits are
+    // written (reserved format area + dark module read as light), then commit.
+    for (var mask = 0; mask < 8; mask++) {
+      var M = newMatrix(info.version);
+      M.m = base.m.map(function (row) { return row.slice(); });
+      for (var r = 0; r < M.size; r++) for (var c = 0; c < M.size; c++) if (!base.res[r][c] && MASKS[mask](r, c)) M.m[r][c] ^= 1;
+      var pen = penalty(M.m, M.size);
+      if (best === null || pen < best.pen) best = { pen: pen, m: M.m, size: M.size, mask: mask };
+    }
+    applyFormat(best.m, base.res, base.size, info.version, ecc, best.mask);
+    return { version: info.version, size: best.size, modules: best.m, mask: best.mask, ecc: ecc };
+  }
+
+  function toSVG(qr, opts) {
+    opts = opts || {};
+    var q = opts.quietZone == null ? 4 : opts.quietZone;
+    var px = opts.pixelSize == null ? 8 : opts.pixelSize;
+    var dark = opts.dark || '#000000';
+    var light = opts.light || '#ffffff';
+    var n = qr.size, dim = (n + q * 2) * px;
+    var d = '';
+    for (var r = 0; r < n; r++) {
+      var c = 0;
+      while (c < n) {
+        if (qr.modules[r][c]) {
+          var w = 1;
+          while (c + w < n && qr.modules[r][c + w]) w++;
+          d += 'M' + ((c + q) * px) + ' ' + ((r + q) * px) + 'h' + (w * px) + 'v' + px + 'h-' + (w * px) + 'z';
+          c += w;
+        } else c++;
+      }
+    }
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + dim + '" height="' + dim + '" viewBox="0 0 ' + dim + ' ' + dim + '" shape-rendering="crispEdges">' +
+      '<rect width="100%" height="100%" fill="' + light + '"/><path d="' + d + '" fill="' + dark + '"/></svg>';
+  }
+
+  return { encode: encode, toSVG: toSVG, dataCodewords: dataCodewords, pickVersion: pickVersion, genPoly: genPoly, ecBytes: ecBytes,
+    _debug: { buildBits: buildBits, interleave: interleave, buildMatrix: buildMatrix, penalty: penalty, bch15: bch15, bch18: bch18, MASKS: MASKS } };
+});
+
+/* ===== fmt.js ===== */
+/* KCD.fmt — formatting helpers (Khmer dates, money, digits) */
+(function (root) {
+  'use strict';
+  var F = {};
+  var KM_MONTHS = ['មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា', 'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'];
+  var KM_DAYS = ['ថ្ងៃអាទិត្យ', 'ថ្ងៃច័ន្ទ', 'ថ្ងៃអង្គារ', 'ថ្ងៃពុធ', 'ថ្ងៃព្រហស្បតិ៍', 'ថ្ងៃសុក្រ', 'ថ្ងៃសៅរ៍'];
+  F.MONTHS = KM_MONTHS; F.DAYS = KM_DAYS;
+
+  F.nf = function (n, dec) {
+    if (typeof n !== 'number' || !isFinite(n)) n = 0;
+    return n.toLocaleString('en-US', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec == null ? 0 : dec });
+  };
+  F.KH_DIGITS = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+  F.toKhDigits = function (s) { return String(s).replace(/[0-9]/g, function (d) { return F.KH_DIGITS[+d]; }); };
+  F.digits = function (s, useKh) { return useKh ? F.toKhDigits(s) : s; };
+  F.riel = function (v, kh) { return F.digits(F.nf(Math.round(v)), kh) + ' រៀល'; };
+  F.usd = function (v, kh) { return '$' + F.digits(F.nf(v, 2), kh); };
+  F.money = function (v, cur, kh, rate) {
+    if (cur === 'USD') return F.usd(v, kh);
+    return F.riel(v, kh);
+  };
+  /* record -> {khr, usd} totals */
+  F.convert = function (rec, rate) {
+    rate = rate || 4100;
+    var v = Number(rec.amount) || 0;
+    if (rec.currency === 'USD') return { khr: v * rate, usd: v };
+    return { khr: v, usd: rate > 0 ? v / rate : 0 };
+  };
+
+  F.todayISO = function (d) {
+    d = d || new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  };
+  F.nowHM = function () { var d = new Date(); return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0'); };
+  F.parseISO = function (iso) { var p = String(iso || '').split('-'); return new Date(+p[0], (p[1] || 1) - 1, +(p[2] || 1)); };
+  F.dateKh = function (iso, withDay) {
+    var d = F.parseISO(iso);
+    if (isNaN(d)) return iso || '';
+    var s = d.getDate() + ' ' + KM_MONTHS[d.getMonth()] + ' ' + d.getFullYear();
+    return withDay ? KM_DAYS[d.getDay()] + ' ' + s : s;
+  };
+  F.longDateKh = function (d) {
+    d = d || new Date();
+    return KM_DAYS[d.getDay()] + ' ទី ' + d.getDate() + ' ខែ' + KM_MONTHS[d.getMonth()] + ' ឆ្នាំ' + d.getFullYear();
+  };
+  F.esc = function (s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  F.escAttr = F.esc;
+  F.norm = function (s) {
+    s = String(s == null ? '' : s).normalize('NFC').toLowerCase().replace(/\s+/g, ' ');
+    try { s = s.replace(/[\u17b4\u17b5]/g, ' '); } catch (e) {}
+    return s.trim();
+  };
+  F.uid = function () {
+    return 'g' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  };
+  root.KCD = root.KCD || {}; root.KCD.fmt = F;
+  if (typeof module !== 'undefined' && module.exports) module.exports = F;
+})(typeof self !== 'undefined' ? self : this);
+
+/* ===== db.js ===== */
+/* KCD.db — storage layer: IndexedDB (primary) + localStorage fallback */
+(function (root) {
+  'use strict';
+  var DB_NAME = 'kcd-db', STORE = 'records', LS_KEY = 'kcd-records-v1';
+  var D = {};
+  var idb = null, useLS = !root.indexedDB;
+
+  function openIDB() {
+    return new Promise(function (resolve, reject) {
+      var req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = function () {
+        var dbv = req.result;
+        if (!dbv.objectStoreNames.contains(STORE)) dbv.createObjectStore(STORE, { keyPath: 'id' });
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+      req.onblocked = function () { reject(new Error('blocked')); };
+    });
+  }
+  function tx(store, mode, fn) {
+    return new Promise(function (resolve, reject) {
+      try {
+        var t = idb.transaction(store, mode);
+        var s = t.objectStore(store);
+        var out = fn(s);
+        t.oncomplete = function () { resolve(out && out.result !== undefined ? out.result : undefined); };
+        t.onerror = t.onabort = function () { reject(t.error); };
+      } catch (e) { reject(e); }
+    });
+  }
+
+  D.init = function () {
+    if (useLS) return Promise.resolve('ls');
+    return openIDB().then(function (db) { idb = db; return 'idb'; }).catch(function () { useLS = true; return 'ls'; });
+  };
+  D.kind = function () { return useLS ? 'localStorage' : 'IndexedDB'; };
+
+  D.loadAll = function () {
+    if (useLS) {
+      try { return Promise.resolve(JSON.parse(root.localStorage.getItem(LS_KEY) || '[]')); } catch (e) { return Promise.resolve([]); }
+    }
+    return tx(STORE, 'readonly', function (s) { return s.getAll(); })
+      .then(function (rows) { return rows || []; })
+      .catch(function () { try { return JSON.parse(root.localStorage.getItem(LS_KEY) || '[]'); } catch (e) { return []; } });
+  };
+  D.persistAll = function (rows) {
+    if (useLS) { root.localStorage.setItem(LS_KEY, JSON.stringify(rows)); return Promise.resolve(); }
+    return tx(STORE, 'readwrite', function (s) {
+      s.clear(); rows.forEach(function (r) { s.put(r); });
+    });
+  };
+  D.putMany = function (rows) {
+    if (useLS) return null;
+    return tx(STORE, 'readwrite', function (s) { rows.forEach(function (r) { s.put(r); }); }).catch(function () { useLS = true; });
+  };
+  D.removeMany = function (ids) {
+    if (useLS) return null;
+    return tx(STORE, 'readwrite', function (s) { ids.forEach(function (i) { s.delete(i); }); }).catch(function () { useLS = true; });
+  };
+  D.clear = function () {
+    if (useLS) { root.localStorage.removeItem(LS_KEY); return Promise.resolve(); }
+    return tx(STORE, 'readwrite', function (s) { s.clear(); });
+  };
+  D.count = function () { return D.loadAll().then(function (r) { return r.length; }); };
+
+  root.KCD = root.KCD || {}; root.KCD.db = D;
+  if (typeof module !== 'undefined' && module.exports) module.exports = D;
+})(typeof self !== 'undefined' ? self : this);
+
+/* ===== charts.js ===== */
+/* KCD.charts — inline SVG charts (no dependencies, print-friendly) */
+(function (root) {
+  'use strict';
+  var C = {};
+  var PALETTE = ['#6366f1', '#0ea5e9', '#14b8a6', '#f59e0b', '#ef4444', '#8b5cf6', '#22c55e',
+    '#ec4899', '#f97316', '#06b6d4', '#84cc16', '#a855f7', '#e11d48', '#3b82f6', '#d97706'];
+  C.PALETTE = PALETTE;
+  C.color = function (i) { return PALETTE[i % PALETTE.length]; };
+
+  /* donut: [{label, value, color?}] */
+  C.donut = function (data, opts) {
+    opts = opts || {};
+    var size = opts.size || 190, r = size / 2 - 8, cx = size / 2, cy = size / 2, stroke = opts.thickness || 30;
+    var total = data.reduce(function (s, d) { return s + d.value; }, 0);
+    if (total <= 0) {
+      return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="' + size + '"><circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="currentColor" opacity=".12" stroke-width="' + stroke + '"/>' +
+        '<text x="' + cx + '" y="' + (cy + 5) + '" text-anchor="middle" font-size="13" fill="currentColor" opacity=".55">គ្មានទិន្នន័យ</text></svg>';
+    }
+    var rad = function (deg) { return (deg - 90) * Math.PI / 180; };
+    var a = 0, parts = [];
+    data.forEach(function (d, i) {
+      var frac = d.value / total, sweep = Math.max(frac * 360 - (data.length > 1 ? 1.6 : 0), 0.001);
+      var a0 = a + 0.8, a1 = a0 + sweep;
+      var large = sweep > 180 ? 1 : 0;
+      var x0 = cx + r * Math.cos(rad(a0)), y0 = cy + r * Math.sin(rad(a0));
+      var x1 = cx + r * Math.cos(rad(a1)), y1 = cy + r * Math.sin(rad(a1));
+      if (data.length === 1) {
+        parts.push('<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="' + (d.color || C.color(i)) + '" stroke-width="' + stroke + '"/>');
+      } else {
+        parts.push('<path d="M' + x0.toFixed(2) + ' ' + y0.toFixed(2) + ' A' + r + ' ' + r + ' 0 ' + large + ' 1 ' + x1.toFixed(2) + ' ' + y1.toFixed(2) +
+          '" fill="none" stroke="' + (d.color || C.color(i)) + '" stroke-width="' + stroke + '" stroke-linecap="butt"><title>' + d.label + '</title></path>');
+      }
+      a += frac * 360;
+    });
+    var mid = data.length === 1
+      ? ''
+      : '';
+    return '<svg viewBox="0 0 ' + size + ' ' + size + '" width="100%" height="' + size + '" role="img">' + parts.join('') + mid + '</svg>';
+  };
+
+  /* horizontal bars: [{label, value, disp}] */
+  C.bars = function (data, opts) {
+    opts = opts || {};
+    if (!data.length) return '<div class="empty">គ្មានទិន្នន័យ</div>';
+    var max = Math.max.apply(null, data.map(function (d) { return d.value; })) || 1;
+    var h = 30, gap = 10, labelW = opts.labelW || 150, w = opts.width || 560;
+    var height = data.length * (h + gap) + 6;
+    var rows = data.map(function (d, i) {
+      var bw = Math.max(3, (w - labelW - 90) * d.value / max);
+      var col = d.color || C.color(i);
+      return '<g transform="translate(0,' + (i * (h + gap)) + ')">' +
+        '<text x="0" y="' + (h / 2 + 5) + '" font-size="12.5" fill="currentColor">' + esc(d.label.length > 16 ? d.label.slice(0, 15) + '…' : d.label) + '</text>' +
+        '<rect x="' + labelW + '" y="4" width="' + bw + '" height="' + (h - 10) + '" rx="7" fill="' + col + '"><title>' + esc(d.label) + '</title></rect>' +
+        '<text x="' + (labelW + bw + 8) + '" y="' + (h / 2 + 5) + '" font-size="12" fill="currentColor" opacity=".75">' + esc(d.disp != null ? d.disp : d.value) + '</text>' +
+        '</g>';
+    }).join('');
+    return '<svg viewBox="0 0 ' + w + ' ' + height + '" width="100%" style="max-width:' + w + 'px" role="img">' + rows + '</svg>';
+  };
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+  root.KCD = root.KCD || {}; root.KCD.charts = C;
+  if (typeof module !== 'undefined' && module.exports) module.exports = C;
+})(typeof self !== 'undefined' ? self : this);
+
+/* ===== export.js ===== */
+/* KCD.ex — exports: CSV, Excel (.xls SpreadsheetML), JSON backup, print/PDF report */
+(function (root) {
+  'use strict';
+  var F = (root.KCD && root.KCD.fmt) || require('./fmt.js');
+  var E = {};
+
+  E.HEADERS = ['ល.រ', 'ថ្ងៃទី', 'ម៉ោង', 'ឈ្មោះ', 'ទូរស័ព្ទ', 'ទីកន្លែង', 'រូបិយប័ណ្ណ', 'ចំនួន', 'សរុប (រៀល)', 'សរុប ($)', 'កំណត់ហេតុ'];
+
+  /* ---------- aggregate ---------- */
+  E.summary = function (records, rate) {
+    var byLoc = {}, t = { count: 0, khr: 0, usd: 0 };
+    records.forEach(function (r) {
+      var c = F.convert(r, rate);
+      t.count++; t.khr += c.khr; t.usd += c.usd;
+      var k = (r.location || '').trim() || 'គ្មានទីកន្លែង';
+      if (!byLoc[k]) byLoc[k] = { loc: k, count: 0, khr: 0, usd: 0 };
+      byLoc[k].count++; byLoc[k].khr += c.khr; byLoc[k].usd += c.usd;
+    });
+    t.locs = Object.keys(byLoc).length;
+    t.rows = Object.keys(byLoc).map(function (k) {
+      var d = byLoc[k]; d.khrTotal = d.khr; d.pct = t.khr > 0 ? d.khr / t.khr * 100 : 0; return d;
+    }).sort(function (a, b) { return b.khr - a.khr; });
+    return t;
+  };
+
+  /* ---------- CSV ---------- */
+  function cell(v) { v = String(v == null ? '' : v); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  E.csvText = function (records, opts) {
+    opts = opts || {};
+    var L = [E.HEADERS.map(cell).join(',')];
+    records.forEach(function (r, i) {
+      var c = F.convert(r, opts.rate);
+      L.push([i + 1, r.date || '', r.time || '', r.name, r.phone || '', r.location || '',
+        r.currency === 'USD' ? 'ដុល្លារ' : 'រៀល', r.amount, Math.round(c.khr), Math.round(c.usd * 100) / 100, r.note || ''].map(cell).join(','));
+    });
+    return '\uFEFF' + L.join('\r\n');
+  };
+
+  /* ---------- Excel (SpreadsheetML 2003 — opens natively in Excel/LibreOffice/Google Sheets) ---------- */
+  function x(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function cS(v, style) { return '<Cell' + (style ? ' ss:StyleID="' + style + '"' : '') + '><Data ss:Type="String">' + x(v) + '</Data></Cell>'; }
+  function cN(v, style) { return '<Cell' + (style ? ' ss:StyleID="' + style + '"' : '') + '><Data ss:Type="Number">' + (Number(v) || 0) + '</Data></Cell>'; }
+  function row(cells) { return '<Row>' + cells.join('') + '</Row>'; }
+  E.xlsText = function (records, opts) {
+    opts = opts || {};
+    var sum = E.summary(records, opts.rate);
+    var s1 = ['<Worksheet ss:Name="បញ្ជីភ្ញៀវ"><Table ss:DefaultRowHeight="17">' + row(E.HEADERS.map(function (h) { return cS(h, 'hdr'); }))];
+    records.forEach(function (r, i) {
+      var c = F.convert(r, opts.rate);
+      s1.push(row([cN(i + 1, 'n0'), cS(r.date || ''), cS(r.time || ''), cS(r.name), cS(r.phone || ''), cS(r.location || ''),
+        cS(r.currency === 'USD' ? 'ដុល្លារ' : 'រៀល'), cN(r.amount, 'money'), cN(Math.round(c.khr), 'money'), cN(Math.round(c.usd * 100) / 100, 'money'), cS(r.note || '')]));
+    });
+    s1.push(row([cS('សរុប', 'tot'), cS(''), cS(''), cS(sum.count + ' នាក់', 'tot'), cS(''), cS(sum.locs + ' ទីកន្លែង', 'tot'), cS(''), cS(''), cN(Math.round(sum.khr), 'totn'), cN(Math.round(sum.usd * 100) / 100, 'totn'), cS('')]));
+    s1.push('</Table></Worksheet>');
+
+    var s2 = ['<Worksheet ss:Name="សង្ខេបតាមទីកន្លែង"><Table ss:DefaultRowHeight="17">' +
+      row(['ទីកន្លែង', 'ចំនួនភ្ញៀវ', 'សរុប (រៀល)', 'សរុប ($)', '% សរុប'].map(function (h) { return cS(h, 'hdr'); }))];
+    sum.rows.forEach(function (d) {
+      s2.push(row([cS(d.loc), cN(d.count, 'n0'), cN(Math.round(d.khr), 'money'), cN(Math.round(d.usd * 100) / 100, 'money'), cN(Math.round(d.pct * 10) / 10, 'pct')]));
+    });
+    s2.push(row([cS('សរុប', 'tot'), cN(sum.count, 'totn'), cN(Math.round(sum.khr), 'totn'), cN(Math.round(sum.usd * 100) / 100, 'totn'), cN(100, 'totn')]));
+    s2.push('</Table></Worksheet>');
+
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<?mso-application progid="Excel.Sheet"?>\n' +
+      '<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet" xmlns:o="urn:schemas-microsoft-com:office:office"' +
+      ' xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+      '<Styles>' +
+      '<Style ss:ID="Default" ss:Name="Normal"><Font ss:FontName="Nokora" ss:Size="11"/><Alignment ss:Vertical="Center"/></Style>' +
+      '<Style ss:ID="hdr"><Font ss:FontName="Nokora" ss:Bold="1" ss:Color="#FFFFFF"/><Interior ss:Color="#6366F1" ss:Pattern="Solid"/><Alignment ss:Horizontal="Center" ss:Vertical="Center"/></Style>' +
+      '<Style ss:ID="money"><NumberFormat ss:Format="#,##0.00"/></Style>' +
+      '<Style ss:ID="n0"><NumberFormat ss:Format="#,##0"/></Style>' +
+      '<Style ss:ID="pct"><NumberFormat ss:Format="0.0&quot;%&quot;"/></Style>' +
+      '<Style ss:ID="tot"><Font ss:FontName="Nokora" ss:Bold="1"/><Interior ss:Color="#EEE8FF" ss:Pattern="Solid"/></Style>' +
+      '<Style ss:ID="totn"><Font ss:FontName="Nokora" ss:Bold="1"/><Interior ss:Color="#EEE8FF" ss:Pattern="Solid"/><NumberFormat ss:Format="#,##0.00"/></Style>' +
+      '</Styles>' + s1.join('') + s2.join('') + '</Workbook>';
+  };
+
+  /* ---------- JSON backup ---------- */
+  E.backupJSON = function (records, settings) {
+    return JSON.stringify({ app: 'kcd', kind: 'backup', version: 1, exportedAt: new Date().toISOString(), count: records.length, settings: settings || null, records: records }, null, 1);
+  };
+  E.parseBackup = function (text) {
+    var d = JSON.parse(text);
+    var rows = Array.isArray(d) ? d : (d && d.records);
+    if (!Array.isArray(rows)) throw new Error('bad backup');
+    return { records: rows, settings: (d && d.settings) || null };
+  };
+
+  /* ---------- printable report (used by print AND by save-as-PDF in the browser) ---------- */
+  E.printHTML = function (opts) {
+    // opts: {title, org, footer, dateStr, filterStr, sum, recs, showSign, showLogo, logo, showCharts, chartsSvg}
+    var f = F;
+    var head = '<div class="print-doc">';
+    if (opts.showLogo && opts.logo) head += '<div style="text-align:center"><img src="' + opts.logo + '" style="max-height:70px;max-width:180px"></div>';
+    head += '<h1>' + f.esc(opts.org ? opts.org : '') + '</h1><h1>' + f.esc(opts.title || 'របាយការណ៍ប្រមូលចំណងដៃ') + '</h1>';
+    head += '<div class="sub">' + f.esc(opts.dateStr || '') + (opts.filterStr ? ' — ' + f.esc(opts.filterStr) : '') + '</div></div>';
+    var sums = '<div class="print-doc"><div class="sum">' +
+      '<div><b>ភ្ញៀវសរុប៖</b> ' + f.nf(opts.sum.count) + ' នាក់</div>' +
+      '<div><b>រៀលសរុប៖</b> ' + f.nf(Math.round(opts.sum.khr)) + '</div>' +
+      '<div><b>ដុល្លារសរុប៖</b> ' + f.nf(opts.sum.usd, 2) + '</div>' +
+      '<div><b>ទីកន្លែងសរុប៖</b> ' + f.nf(opts.sum.locs) + '</div></div></div>';
+    var loc = '';
+    if (opts.sum.rows.length) {
+      loc = '<h2>ក. សង្ខេបតាមទីកន្លែង</h2><table><thead><tr><th>ទីកន្លែង</th><th style="text-align:right">ភ្ញៀវ</th><th style="text-align:right">រៀល</th><th style="text-align:right">ដុល្លារ</th><th style="text-align:right">% </th></tr></thead><tbody>' +
+        opts.sum.rows.map(function (d) {
+          return '<tr><td>' + f.esc(d.loc) + '</td><td class="num">' + f.nf(d.count) + '</td><td class="num">' + f.nf(Math.round(d.khr)) + '</td><td class="num">' + f.nf(d.usd, 2) + '</td><td class="num">' + f.nf(d.pct, 1) + '%</td></tr>';
+        }).join('') +
+        '</tbody><tfoot><tr><td><b>សរុប</b></td><td class="num"><b>' + f.nf(opts.sum.count) + '</b></td><td class="num"><b>' + f.nf(Math.round(opts.sum.khr)) + '</b></td><td class="num"><b>' + f.nf(opts.sum.usd, 2) + '</b></td><td class="num">100%</td></tr></tfoot></table>';
+    }
+    var det = '<h2>ខ. បញ្ជីលម្អិត (' + f.nf(opts.recs.length) + ' កំណត់ហេតុ)</h2><table><thead><tr><th>ល.រ</th><th>ថ្ងៃទី</th><th>ឈ្មោះ</th><th>ទូរស័ព្ទ</th><th>ទីកន្លែង</th><th>រូបិយប័ណ្ណ</th><th style="text-align:right">ចំនួន</th><th style="text-align:right">សរុបរៀល</th></tr></thead><tbody>' +
+      opts.recs.map(function (r, i) {
+        var c = F.convert(r, opts.rate);
+        return '<tr><td>' + (i + 1) + '</td><td>' + f.esc(r.date || '') + '</td><td>' + f.esc(r.name) + '</td><td>' + f.esc(r.phone || '') + '</td><td>' + f.esc(r.location || '') + '</td><td>' + (r.currency === 'USD' ? '$' : 'រៀល') + '</td><td class="num">' + f.nf(r.amount, r.currency === 'USD' ? 2 : 0) + '</td><td class="num">' + f.nf(Math.round(c.khr)) + '</td></tr>';
+      }).join('') + '</tbody></table>';
+    var sign = opts.showSign ? '<div class="print-doc"><div class="sign"><div>អ្នកគណនា<br><br><br>..............................</div><div>មេព្រះ / ពុកផុច<br><br><br>..............................</div><div>ប្រធានក្រុមការងារ<br><br><br>..............................</div></div></div>' : '';
+    var foot = opts.footer ? '<div class="print-doc" style="text-align:center;font-size:11px;color:#666;margin-top:18px">' + f.esc(opts.footer) + '</div>' : '';
+    var body = (opts.chartsSvg ? '<div class="print-doc"><h2>ខ. គំនូសតាង</h2>' + opts.chartsSvg + '</div>' : '') +
+      '<div class="print-doc">' + loc + det + '</div>' + sign + foot;
+    return head + sums + body;
+  };
+
+  /* ---------- browser actions ---------- */
+  E.download = function (name, text, mime) {
+    var blob = text instanceof Blob ? text : new Blob([text], { type: (mime || 'text/plain') + ';charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+  };
+
+  function loadScript(src) {
+    return new Promise(function (res, rej) {
+      var s = document.createElement('script');
+      s.src = src; s.onload = function () { res(); }; s.onerror = function () { rej(new Error('load fail ' + src)); };
+      var to = setTimeout(function () { rej(new Error('timeout')); }, 8000);
+      s.onload = function () { clearTimeout(to); res(); };
+      document.head.appendChild(s);
+    });
+  }
+  E.exportPDF = function (printOpts, settings) {
+    if (settings && settings.pdfEngine === 'jspdf' && root.navigator && root.navigator.onLine !== false) {
+      return loadScript('https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js')
+        .then(function () { return loadScript('https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js'); })
+        .then(function () { return E._jspdf(printOpts, settings); })
+        .catch(function () { return E.print(printOpts); });
+    }
+    return Promise.resolve(E.print(printOpts));
+  };
+  E._jspdf = function (o, s) {
+    var jsPDF = root.jspdf.jsPDF;
+    var doc = new jsPDF({ unit: 'mm', format: (s.paper || 'a4'), orientation: s.orientation || 'portrait' });
+    doc.setFontSize(16); doc.text(o.title || 'Report', 105, 15, { align: 'center' });
+    doc.setFontSize(9); if (o.dateStr) doc.text(o.dateStr, 105, 21, { align: 'center' });
+    doc.autoTable({
+      startY: 26,
+      head: [E.HEADERS],
+      body: o.recs.map(function (r, i) {
+        var c = F.convert(r, o.rate);
+        return [i + 1, r.date || '', r.time || '', r.name, r.phone || '', r.location || '', r.currency === 'USD' ? 'USD' : 'KHR', F.nf(r.amount), F.nf(Math.round(c.khr)), F.nf(c.usd, 2), r.note || ''];
+      }),
+      styles: { fontSize: 8 }, headStyles: { fillColor: [99, 102, 241] }
+    });
+    doc.save(o.filename || 'donation.pdf');
+    return 'jspdf';
+  };
+  E.print = function (opts) {
+    var host = document.getElementById('printRoot');
+    if (!host) return;
+    host.innerHTML = E.printHTML(opts);
+    var size = (opts.settings && opts.settings.paper) === 'a5' ? 'A5' : 'A4';
+    var orient = (opts.settings && opts.settings.orientation) === 'landscape' ? 'landscape' : 'portrait';
+    var st = document.getElementById('printPageCss') || (function () { var el = document.createElement('style'); el.id = 'printPageCss'; document.head.appendChild(el); return el; })();
+    st.textContent = '@page{size:' + size + ' ' + orient + ';margin:12mm}';
+    root.print();
+    return 'print';
+  };
+
+  root.KCD = root.KCD || {}; root.KCD.ex = E;
+  if (typeof module !== 'undefined' && module.exports) module.exports = E;
+})(typeof self !== 'undefined' ? self : this);
+
+/* ===== merge.js ===== */
+/* KCD.merge — data-merge helpers: parse CSV/JSON, normalize, classify new vs duplicate */
+(function (root) {
+  'use strict';
+  var F = (root.KCD && root.KCD.fmt) || require('./fmt.js');
+  var M = {};
+
+  /* ---------- CSV ---------- */
+  M.parseCSV = function (text) {
+    text = String(text || '').replace(/^\uFEFF/, '').replace(/\r\n?/g, '\n');
+    var head = text.split('\n')[0] || '';
+    var delim = ',';
+    var counts = { ',': (head.match(/,/g) || []).length, ';': (head.match(/;/g) || []).length, '\t': (head.match(/\t/g) || []).length };
+    if (counts[';'] > counts[','] && counts[';'] >= counts['\t']) delim = ';';
+    if (counts['\t'] > counts[','] && counts['\t'] > counts[';']) delim = '\t';
+    var rows = [], row = [], val = '', q = false;
+    for (var i = 0; i < text.length; i++) {
+      var ch = text[i];
+      if (q) {
+        if (ch === '"') { if (text[i + 1] === '"') { val += '"'; i++; } else q = false; }
+        else val += ch;
+      } else if (ch === '"') q = true;
+      else if (ch === delim) { row.push(val); val = ''; }
+      else if (ch === '\n') { row.push(val); rows.push(row); row = []; val = ''; }
+      else val += ch;
+    }
+    if (val !== '' || row.length) { row.push(val); rows.push(row); }
+    return rows.filter(function (r) { return r.some(function (c) { return String(c).trim() !== ''; }); });
+  };
+
+  /* ---------- header mapping ---------- */
+  var ALIAS = {
+    name: ['name', 'ឈ្មោះ', 'អ្នកផ្តល់', 'អ្នកជំនួយ', 'ភ្ញៀវ', 'ឈ្មោះភ្ញៀវ'],
+    phone: ['phone', 'tel', 'ទូរស័ព្ទ', 'លេខទូរស័ព្ទ', 'ទ្រព្យ'],
+    location: ['location', 'place', 'ទីកន្លែង', 'ទីតាំង', 'មណ្ឌល', 'ផ្ទះ', 'ភូមិ', 'កន្លែង'],
+    amount: ['amount', 'money', 'ចំនួន', 'ប្រាក់', 'ទឹកប្រាក់', 'ចំណងដៃ', 'ចំនួនទឹកប្រាក់', 'សរុប'],
+    currency: ['currency', 'រូបិយប័ណ្ណ', 'ប្រភេទប្រាក់'],
+    date: ['date', 'day', 'ថ្ងៃ', 'កាលបរិច្ឆេទ', 'ថ្ងៃខែ'],
+    time: ['time', 'ម៉ោង'],
+    note: ['note', 'remark', 'កំណត់ហេតុ', 'ចំណាំ', 'សេចក្តីប្រកាស']
+  };
+  function mapHeader(h) {
+    var s = F.norm(h);
+    for (var k in ALIAS) if (ALIAS[k].some(function (a) { return s === a || s.indexOf(a) >= 0; })) return k;
+    return null;
+  }
+
+  function parseAmount(v) {
+    if (typeof v === 'number') return v;
+    var s = String(v == null ? '' : v);
+    var cur = /(\$|usd|ដុល្លារ|ឌុល)/i.test(s) ? 'USD' : (/រៀល|៛|\bkhr\b/i.test(s) ? 'KHR' : null);
+    s = s.replace(/[^\d.,\-]/g, '');
+    if (!s) return { amount: 0, currency: cur };
+    // heuristics: "1,234.50" | "1.234,50" | "12,000" | "1234.5"
+    var lastComma = s.lastIndexOf(','), lastDot = s.lastIndexOf('.');
+    if (lastComma > -1 && lastDot > -1) {
+      if (lastComma > lastDot) s = s.replace(/\./g, '').replace(',', '.');
+      else s = s.replace(/,/g, '');
+    } else if (lastComma > -1) {
+      var parts = s.split(',');
+      if (parts.length > 1 && parts[parts.length - 1].length === 3) s = s.replace(/,/g, '');
+      else s = s.replace(',', '.');
+    }
+    var n = parseFloat(s);
+    return { amount: isFinite(n) ? Math.abs(n) : 0, currency: cur };
+  }
+  function normDate(v) {
+    if (v == null || v === '') return '';
+    if (typeof v === 'number' && v > 20000 && v < 60000) { // Excel serial
+      var d = new Date(Math.round((v - 25569) * 86400 * 1000));
+      return F.todayISO(d);
+    }
+    var s = String(v).trim();
+    var m = s.match(/^(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})/);
+    if (m) return m[1] + '-' + m[2].padStart(2, '0') + '-' + m[3].padStart(2, '0');
+    m = s.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})/);
+    if (m) return m[3] + '-' + m[2].padStart(2, '0') + '-' + m[1].padStart(2, '0');
+    var dt = new Date(s);
+    if (!isNaN(dt) && /\d{4}/.test(s)) return F.todayISO(dt);
+    return s.slice(0, 10);
+  }
+
+  /* ---------- normalize ----------
+   * rows: array of objects (from JSON/SheetJS) or array of arrays (CSV) */
+  function guessCols(data) {
+    var ncol = data.reduce(function (m, r) { return Math.max(m, (r || []).length); }, 0);
+    var keys = new Array(ncol).fill(null);
+    var sample = data.slice(0, 6);
+    var amountCol = -1, amountScore = 0;
+    for (var c = 0; c < ncol; c++) {
+      var nums = 0;
+      sample.forEach(function (r) {
+        var v = r && r[c];
+        if (v == null || v === '') return;
+        var n = parseAmount(v).amount;
+        if (n > 0 && /^[\d.,$\s\u17db\u178f\u17b8\u179a\u17bb\u1787\u17d2]+\s*(រៀល|\$|usd|ដុល្លារ)?$/i.test(String(v).trim())) nums++;
+      });
+      if (nums > amountScore) { amountScore = nums; amountCol = c; }
+    }
+    if (amountCol > -1) keys[amountCol] = 'amount';
+    var nameCol = -1;
+    for (var c2 = 0; c2 < ncol; c2++) {
+      if (c2 === amountCol) continue;
+      var strs = 0;
+      sample.forEach(function (r) {
+        var v = r && r[c2];
+        if (v == null || v === '') return;
+        if (isNaN(parseFloat(String(v))) || /\D/.test(String(v).trim())) strs++;
+      });
+      if (strs > 0) { nameCol = c2; break; }
+    }
+    if (nameCol > -1) keys[nameCol] = 'name';
+    for (var c3 = 0; c3 < ncol; c3++) {
+      if (c3 === amountCol || c3 === nameCol || keys[c3]) continue;
+      var locSeen = sample.some(function (r) { return r && typeof r[c3] === 'string' && r[c3].trim() && isNaN(+new Date(r[c3])); });
+      if (locSeen) { keys[c3] = 'location'; break; }
+    }
+    return keys;
+  }
+
+  function assign(obj, k, v) {
+    if (k === 'amount') { var pa = parseAmount(v); obj.amount = pa.amount; if (pa.currency) obj.currency = pa.currency; }
+    else if (k === 'date') obj.date = normDate(v);
+    else if (k === 'currency') obj.currency = /(\$|usd|ដុល្លារ)/i.test(String(v)) ? 'USD' : 'KHR';
+    else obj[k] = String(v == null ? '' : v).trim();
+  }
+
+  M.normalize = function (rows) {
+    if (!rows || !rows.length) return [];
+    var isArr = Array.isArray(rows[0]);
+    var keys = null, data;
+    if (isArr) {
+      var header = rows[0].map(mapHeader);
+      if (header.filter(Boolean).length >= 1) { keys = header; data = rows.slice(1); }
+      else { keys = guessCols(rows); data = rows; }
+    } else data = rows;
+    var out = [];
+    for (var i = 0; i < data.length; i++) {
+      var r = data[i], obj = { name: '', phone: '', location: '', amount: 0, currency: '', date: '', time: '', note: '', valid: false };
+      if (isArr) {
+        for (var j = 0; j < keys.length; j++) { if (keys[j]) assign(obj, keys[j], r[j]); }
+      } else {
+        for (var key in r) { var kk = mapHeader(key); if (kk) assign(obj, kk, r[key]); }
+      }
+      if (!obj.currency) obj.currency = obj.amount > 0 && obj.amount <= 1000 ? 'USD' : 'KHR';
+      if (!obj.name && !obj.amount) continue;
+      obj.name = String(obj.name || '').replace(/\s+/g, ' ').trim();
+      obj.valid = !!(obj.name && obj.amount > 0);
+      out.push(obj);
+    }
+    return out;
+  };
+
+  /* ---------- dedupe keys ---------- */
+  M.key = function (rec, rate) {
+    var c = F.convert({ amount: rec.amount, currency: rec.currency || 'KHR' }, rate || 4100);
+    return F.norm(rec.name) + '|' + Math.round(c.khr) + '|' + (rec.date || '');
+  };
+  M.classify = function (incoming, existing, rate) {
+    var seen = {}, dupDB = {};
+    (existing || []).forEach(function (r) { dupDB[M.key(r, rate)] = 1; });
+    var stats = { total: incoming.length, newCount: 0, dupCount: 0, invalid: 0 };
+    var items = incoming.map(function (rec) {
+      var it = { rec: rec };
+      if (!rec.valid) { it.status = 'invalid'; stats.invalid++; return it; }
+      var k = M.key(rec, rate);
+      if (dupDB[k] || seen[k]) { it.status = 'dup'; stats.dupCount++; }
+      else { it.status = 'new'; stats.newCount++; seen[k] = 1; }
+      return it;
+    });
+    return { items: items, stats: stats };
+  };
+
+  /* ---------- ingest from file content ---------- */
+  M.fromText = function (name, text) {
+    var ext = (name.split('.').pop() || '').toLowerCase();
+    if (ext === 'json') {
+      var d = JSON.parse(text);
+      var rows = Array.isArray(d) ? d : (d.records || d.data || []);
+      return M.normalize(rows);
+    }
+    return M.normalize(M.parseCSV(text));
+  };
+
+  root.KCD = root.KCD || {}; root.KCD.merge = M;
+  if (typeof module !== 'undefined' && module.exports) module.exports = M;
+})(typeof self !== 'undefined' ? self : this);
+
+/* ===== app.js ===== */
+/* KCD.app — main application: views, state, settings, handlers */
+(function (root) {
+  'use strict';
+  var K = root.KCD, F = K.fmt, DB = K.db, EX = K.ex, MG = K.merge, QR = K.qr, CH = K.charts;
+  var SKEY = 'kcd-settings-v1', DEMO_FLAG = 'kcd-demo-v1', LS_KEY_FALLBACK = 'kcd-records-v1';
+  var APP_VERSION = '1.0.0';
+
+  /* ================= state ================= */
+  var DEF_SETTINGS = {
+    theme: 'light', accent: '#6366f1', fs: 'md', currency: 'KHR', rate: 4100, khDigits: false,
+    pdfTitle: 'របាយការណ៍ប្រមូលចំណងដៃ', pdfOrg: '', pdfFooter: 'បង្កើតដោយកម្មវិធីកត់ចំណងដៃ',
+    logo: '', paper: 'a4', orientation: 'portrait', showDate: true, showSign: true, showCharts: true, pdfEngine: 'print',
+    qrText: '', qrEcc: 'M', qrSize: 8
+  };
+  var S = { settings: null, records: [], view: 'record', q: '', dayFilter: 'all', locFilter: '', monthFilter: '', page: 1, perPage: 40, editing: null, merge: null, saved: null };
+
+  function defaults() { var o = {}; for (var k in DEF_SETTINGS) o[k] = DEF_SETTINGS[k]; return o; }
+  function loadSettings() {
+    var o = defaults();
+    try { var raw = localStorage.getItem(SKEY); if (raw) { var j = JSON.parse(raw); for (var k in j) if (k in o) o[k] = j[k]; } } catch (e) {}
+    S.settings = o; applySettings();
+  }
+  function saveSettings() { try { localStorage.setItem(SKEY, JSON.stringify(S.settings)); } catch (e) {} applySettings(); }
+  function applySettings() {
+    var s = S.settings, h = document.documentElement;
+    h.setAttribute('data-theme', s.theme);
+    h.setAttribute('data-fs', s.fs);
+    var meta = document.querySelector('meta[name=theme-color]');
+    if (meta) meta.setAttribute('content', s.theme === 'dark' ? '#0d1220' : '#ffffff');
+    h.style.setProperty('--accent', s.accent);
+  }
+  function persist(failMsg) {
+    return DB.persistAll(S.records).catch(function () { if (root.KCD_toast) KCD_toast(failMsg || 'រក្សាទុកមិនបានសម្រេច', 'err'); });
+  }
+
+  /* ================= computed ================= */
+  function inScope(r) { // global filters on record view
+    var s = S.settings;
+    if (S.dayFilter === 'today' && r.date !== F.todayISO()) return false;
+    if (S.dayFilter === 'week') {
+      var d = F.parseISO(r.date || '1970-01-01'), now = new Date();
+      var diff = (new Date(now.getFullYear(), now.getMonth(), now.getDate()) - d) / 86400000;
+      if (!(diff >= 0 && diff < 7)) return false;
+    }
+    if (S.locFilter && F.norm(r.location || '') !== F.norm(S.locFilter)) return false;
+    if (S.q) {
+      var q = F.norm(S.q);
+      var hay = F.norm(r.name) + ' ' + F.norm(r.phone) + ' ' + F.norm(r.location) + ' ' + F.norm(r.note);
+      if (hay.indexOf(q) === -1) return false;
+    }
+    return true;
+  }
+  function reportScope(r) {
+    if (S.locFilter && F.norm(r.location || '') !== F.norm(S.locFilter)) return false;
+    if (S.monthFilter && String(r.date || '').slice(0, 7) !== S.monthFilter) return false;
+    return true;
+  }
+  function totals(list) {
+    var rate = S.settings.rate;
+    var t = { count: 0, khr: 0, usd: 0 };
+    list.forEach(function (r) { var c = F.convert(r, rate); t.count++; t.khr += c.khr; t.usd += c.usd; });
+    return t;
+  }
+  function todayTotals() {
+    var d = F.todayISO();
+    var t = totals(S.records.filter(function (r) { return r.date === d; }));
+    t.count = t.count; return t;
+  }
+  function locations() {
+    var m = {};
+    S.records.forEach(function (r) { var l = (r.location || '').trim(); if (l) m[l] = (m[l] || 0) + 1; });
+    return Object.keys(m).sort();
+  }
+  function months() {
+    var m = {};
+    S.records.forEach(function (r) { var x = String(r.date || '').slice(0, 7); if (x) m[x] = 1; });
+    return Object.keys(m).sort().reverse();
+  }
+
+  /* ================= icons ================= */
+  function svg(d, extra) {
+    return '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"' + (extra || '') + '>' + d + '</svg>';
+  }
+  var ICON = {
+    record: svg('<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>'),
+    report: svg('<path d="M3 3v18h18"/><rect x="7" y="10" width="3" height="8" rx="1"/><rect x="12" y="6" width="3" height="12" rx="1"/><rect x="17" y="13" width="3" height="5" rx="1"/>'),
+    merge: svg('<path d="M8 6 4 10l4 4"/><path d="M4 10h9a4 4 0 0 0 4-4"/><path d="m16 18 4-4-4-4"/>'),
+    settings: svg('<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>'),
+    search: svg('<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>'),
+    plus: svg('<path d="M12 5v14"/><path d="M5 12h14"/>'),
+    cash: svg('<rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6 12h.01M18 12h.01"/>'),
+    dollar: svg('<line x1="12" y1="2" x2="12" y2="22"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>'),
+    day: svg('<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>'),
+    pin: svg('<path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/>'),
+    excel: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="m9 13 6 6M15 13l-6 6"/>'),
+    pdf: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M8 15h1.5a1.2 1.2 0 0 0 0-2.4H8V18"/><path d="M13 12.6h1.4a1.7 1.7 0 0 1 0 3.4H13zM16.5 12.6H18"/>'),
+    print: svg('<path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>'),
+    edit: svg('<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/>'),
+    trash: svg('<path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>'),
+    db: svg('<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/><path d="M3 12a9 3 0 0 0 18 0"/>'),
+    qr: svg('<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v7M18 18v3M14 21h0"/>'),
+    file: svg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'),
+    inbox: svg('<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>'),
+    install: svg('<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M21 21H3"/>'),
+    sun: svg('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>'),
+    moon: svg('<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>'),
+    palette: svg('<circle cx="13.5" cy="6.5" r=".8" fill="currentColor"/><circle cx="17" cy="12" r=".8" fill="currentColor"/><circle cx="6.5" cy="12" r=".8" fill="currentColor"/><circle cx="9" cy="6.5" r=".8" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.56-2.5 5.56-5.55C22 6.01 17.5 2 12 2Z"/>'),
+    copy: svg('<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>')
+  };
+
+  /* ================= helpers (toast/confirm/modal) ================= */
+  function KCD_toast(msg, kind) {
+    var host = document.getElementById('toasts');
+    var el = document.createElement('div');
+    el.className = 'toast ' + (kind || '');
+    el.textContent = msg;
+    host.appendChild(el);
+    setTimeout(function () { el.style.opacity = '0'; el.style.transition = 'opacity .4s'; setTimeout(function () { el.remove(); }, 400); }, 2600);
+  }
+  root.KCD_toast = KCD_toast;
+
+  var modalHost, modalCleanup = null;
+  function openModal(html, opts) {
+    opts = opts || {};
+    closeModal();
+    modalHost.innerHTML = '<div class="modal" style="max-width:' + (opts.width || 660) + 'px" role="dialog">' + html + '</div>';
+    modalHost.classList.add('on');
+    modalHost.onclick = function (e) { if (e.target === modalHost && !opts.sticky) closeModal(); };
+    if (opts.after) opts.after();
+  }
+  function closeModal() { modalHost.classList.remove('on'); modalHost.innerHTML = ''; if (modalCleanup) { modalCleanup(); modalCleanup = null; } }
+
+  function confirmBox(title, msg, okLabel, danger) {
+    return new Promise(function (res) {
+      openModal(
+        '<h3>' + F.esc(title) + '</h3><div style="color:var(--muted)">' + F.esc(msg) + '</div>' +
+        '<div class="modal-foot"><button class="btn ghost" data-no>បោះបង់</button>' +
+        '<button class="btn ' + (danger ? 'danger-fill' : 'pri') + '" data-yes>' + F.esc(okLabel || 'បញ្ជាក់') + '</button></div>',
+        { after: function () {
+          modalHost.querySelector('[data-no]').onclick = function () { closeModal(); res(false); };
+          modalHost.querySelector('[data-yes]').onclick = function () { closeModal(); res(true); };
+        } }
+      );
+    });
+  }
+  function promptDanger(title, msg) {
+    return new Promise(function (res) {
+      openModal(
+        '<h3 style="color:var(--danger)">' + F.esc(title) + '</h3><div style="color:var(--muted)">' + msg +
+        '</div><div class="field" style="margin-top:12px"><label>វាយពាក្យ «លុប» ដើម្បីបញ្ជាក់</label><input type="text" id="dlk" autocomplete="off"></div>' +
+        '<div class="modal-foot"><button class="btn ghost" data-no>បោះបង់</button><button class="btn danger-fill" data-yes>លុបបាត់</button></div>',
+        { after: function () {
+          modalHost.querySelector('[data-no]').onclick = function () { closeModal(); res(false); };
+          modalHost.querySelector('[data-yes]').onclick = function () {
+            var v = modalHost.querySelector('#dlk').value.trim();
+            if (v !== 'លុប') { KCD_toast('សូមវាយពាក្យ «លុប» ឱ្យត្រូវ', 'err'); return; }
+            closeModal(); res(true);
+          };
+        } }
+      );
+    });
+  }
+
+  function statCard(icon, k, v, sub) {
+    return '<div class="card stat"><div class="ic">' + icon + '</div><div style="min-width:0"><p class="k">' + k + '</p>' +
+      '<p class="v">' + v + '</p>' + (sub ? '<small class="muted small">' + sub + '</small>' : '') + '</div></div>';
+  }
+  function fmtNum(n, dec) { return F.digits(F.nf(n, dec), S.settings.khDigits); }
+  function fmtR(v) { return fmtNum(Math.round(v)) + ' <small>រៀល</small>'; }
+  function fmtU(v) { return '<small>$</small>' + fmtNum(v, 2); }
+
+  /* ================= add / edit form ================= */
+  function recordForm(rec) {
+    rec = rec || {};
+    var s = S.settings;
+    var cur = rec.currency || s.currency;
+    var locList = locations().map(function (l) { return '<option value="' + F.escAttr(l) + '">' + F.esc(l) + '</option>'; }).join('');
+    return '<form id="recForm">' +
+      '<div class="form-grid">' +
+      '<div class="field" style="grid-column:1/-1"><label>ឈ្មោះភ្ញៀវ *</label><input type="text" name="name" required value="' + F.escAttr(rec.name || '') + '" placeholder="ឧ. សុខ សុភា" autocomplete="off"></div>' +
+      '<div class="field"><label>ទូរស័ព្ទ</label><input type="tel" name="phone" value="' + F.escAttr(rec.phone || '') + '" placeholder="012 345 678" autocomplete="off"></div>' +
+      '<div class="field"><label>ទីកន្លែង</label><input type="text" name="location" list="locList" value="' + F.escAttr(rec.location || '') + '" placeholder="ឧ. ភ្នំពេញ" autocomplete="off"><datalist id="locList">' + locList + '</datalist></div>' +
+      '<div class="field"><label>រូបិយប័ណ្ណ</label><select name="currency"><option value="KHR"' + (cur !== 'USD' ? ' selected' : '') + '>៛ រៀល</option><option value="USD"' + (cur === 'USD' ? ' selected' : '') + '>$ ដុល្លារ</option></select></div>' +
+      '<div class="field"><label>ចំនួន *</label><input type="number" name="amount" min="0" step="any" required value="' + (rec.amount != null ? rec.amount : '') + '" placeholder="50000"></div>' +
+      '<div class="field"><label>ថ្ងៃទី</label><input type="date" name="date" value="' + (rec.date || F.todayISO()) + '"></div>' +
+      '<div class="field"><label>ម៉ោង</label><input type="time" name="time" value="' + (rec.time || F.nowHM()) + '"></div>' +
+      '<div class="field" style="grid-column:1/-1"><label>កំណត់ហេតុ</label><input type="text" name="note" value="' + F.escAttr(rec.note || '') + '" placeholder="មិនចាំបាច់"></div>' +
+      '</div>' +
+      '<div class="row" style="margin-top:12px;justify-content:space-between">' +
+      '<div class="chips" id="quickAmt"></div><div class="small muted" id="convHint"></div></div>' +
+      '<div class="modal-foot"><button type="button" class="btn ghost" onclick="KCD_closeModal()">បោះបង់</button>' +
+      '<button type="submit" class="btn pri">' + ICON.plus + (rec.id ? 'រក្សាទុកការកែ' : 'កត់បញ្ចូល') + '</button></div></form>';
+  }
+
+  function bindRecordForm(existId) {
+    var form = document.getElementById('recForm');
+    if (!form) return;
+    var curSel = form.currency, amt = form.amount, hint = document.getElementById('convHint'), quick = document.getElementById('quickAmt');
+    function refreshQuick() {
+      var isUSD = curSel.value === 'USD';
+      var vals = isUSD ? [10, 20, 50, 100, 150, 200] : [10000, 20000, 30000, 50000, 100000, 200000];
+      quick.innerHTML = vals.map(function (v) { return '<button type="button" class="chip" data-q="' + v + '">' + (isUSD ? '$' : '') + F.nf(v) + '</button>'; }).join('');
+      quick.querySelectorAll('[data-q]').forEach(function (b) {
+        b.onclick = function () { amt.value = (parseFloat(amt.value) || 0) + (+b.dataset.q); refresh(); };
+      });
+    }
+    function refresh() {
+      var v = parseFloat(amt.value) || 0;
+      var rate = S.settings.rate;
+      var khr = curSel.value === 'USD' ? v * rate : v;
+      var usd = curSel.value === 'USD' ? v : (rate > 0 ? v / rate : 0);
+      hint.textContent = '= ' + F.nf(Math.round(khr)) + ' រៀល  •  ' + '$' + F.nf(usd, 2) + '  (អត្រា 1$ = ' + F.nf(rate) + ')';
+    }
+    curSel.onchange = function () { refreshQuick(); refresh(); };
+    amt.oninput = refresh;
+    refreshQuick(); refresh();
+    form.onsubmit = function (e) {
+      e.preventDefault();
+      var fd = new FormData(form);
+      var rec = {
+        id: existId || F.uid(),
+        name: String(fd.get('name') || '').trim(),
+        phone: String(fd.get('phone') || '').trim(),
+        location: String(fd.get('location') || '').trim(),
+        currency: fd.get('currency') === 'USD' ? 'USD' : 'KHR',
+        amount: Math.abs(parseFloat(fd.get('amount')) || 0),
+        date: fd.get('date') || F.todayISO(),
+        time: fd.get('time') || F.nowHM(),
+        note: String(fd.get('note') || '').trim(),
+        demo: !!S.demoOn,
+        updated: Date.now()
+      };
+      if (!rec.name) { KCD_toast('សូមបញ្ចូលឈ្មោះ', 'err'); return; }
+      if (!(rec.amount > 0)) { KCD_toast('ចំនួនត្រូវតែធំជាង ០', 'err'); return; }
+      var idx = existId ? S.records.findIndex(function (r) { return r.id === existId; }) : -1;
+      if (idx > -1) rec.created = S.records[idx].created, S.records[idx] = rec;
+      else { rec.created = Date.now(); S.records.unshift(rec); }
+      closeModal();
+      render();
+      persist().then(function () { KCD_toast(existId ? 'បានអាប់ដេតកំណត់ហេតុ ✓' : 'បានកត់បញ្ចូល ✓', 'ok'); });
+    };
+  }
+  root.KCD_closeModal = closeModal;
+
+  /* ================= VIEW: កត់ចំណងដៃ ================= */
+  function viewRecord() {
+    var all = totals(S.records.filter(inScope));
+    var today = todayTotals();
+    var list = S.records.filter(inScope).slice().sort(sortFn);
+    var pages = Math.max(1, Math.ceil(list.length / S.perPage));
+    if (S.page > pages) S.page = pages;
+    var pageRows = list.slice((S.page - 1) * S.perPage, S.page * S.perPage);
+    var q = S.q.trim();
+
+    var html = '<div class="stats grid" style="margin-bottom:14px">' +
+      statCard(ICON.record, 'ភ្ញៀវសរុប', fmtNum(all.count) + ' <small>នាក់</small>', today.count ? 'ថ្ងៃនេះ +' + fmtNum(today.count) : '') +
+      statCard(ICON.cash, 'សរុបប្រាក់រៀល', fmtR(all.khr)) +
+      statCard(ICON.dollar, 'សរុបប្រាក់ដុល្លារ', fmtU(all.usd)) +
+      statCard(ICON.day, 'កត់ត្រាថ្ងៃនេះ', fmtNum(today.count) + ' <small>នាក់</small>', fmtNum(Math.round(today.khr)) + ' រៀល · $' + F.nf(today.usd, 2)) +
+      '</div>' +
+      '<div class="card" style="margin-bottom:14px"><div class="row wrap">' +
+      '<div class="search">' + ICON.search + '<input type="text" id="q" placeholder="ស្វែងរកភ្ញៀវតាមឈ្មោះ ទូរស័ព្ទ ឬទីកន្លែង…" value="' + F.escAttr(S.q) + '"></div>' +
+      '<div class="chips">' +
+      chip('dayFilter', 'all', 'ទាំងអស់') + chip('dayFilter', 'today', 'ថ្ងៃនេះ') + chip('dayFilter', 'week', 'សប្តាហ៍នេះ') +
+      '</div>' +
+      '<select id="locSel" style="width:auto"><option value="">ទីកន្លែងទាំងអស់</option>' +
+      locations().map(function (l) { return '<option' + (S.locFilter === l ? ' selected' : '') + '>' + F.esc(l) + '</option>'; }).join('') + '</select>' +
+      '<button class="btn pri" data-act="add">' + ICON.plus + 'បន្ថែមភ្ញៀវ</button>' +
+      '</div></div>';
+
+    html += '<div class="card" style="padding:0"><div class="card-h" style="padding:14px 16px 0;border-bottom:1px solid var(--border);margin-bottom:0">' +
+      '<h3>បញ្ជីកំណត់ហេតុ <span class="muted small">(' + fmtNum(list.length) + ')</span></h3>' +
+      '<div class="row" style="gap:6px">' +
+      '<button class="btn sm ghost" data-act="sort" title="តម្រៀប">' + sortLabel() + '</button></div></div>';
+
+    if (!pageRows.length) {
+      html += '<div class="empty">' + ICON.inbox + '<div>មិនទាន់មានកំណត់ហេតុ</div><div class="small">ចុច «បន្ថែមភ្ញៀវ» ដើម្បីចាប់ផ្តើម</div></div>';
+    } else {
+      html += '<div class="tbl-wrap" style="border:0;border-radius:0"><table class="tbl"><thead><tr>' +
+        '<th>ល.រ</th><th>កាលបរិច្ឆេទ</th><th>ឈ្មោះ</th><th>ទូរស័ព្ទ</th><th>ទីកន្លែង</th><th class="num">ចំនួន</th>' +
+        '<th class="num">≈រៀល</th><th class="num">≈$</th><th>កំណត់ហេតុ</th><th style="width:90px"></th></tr></thead><tbody>';
+      pageRows.forEach(function (r, i) {
+        var c = F.convert(r, S.settings.rate);
+        var nm = highlight(r.name, q);
+        html += '<tr>' +
+          '<td class="muted">' + fmtNum((S.page - 1) * S.perPage + i + 1) + '</td>' +
+          '<td class="mono small">' + F.esc(F.dateKh(r.date)) + (r.time ? '<br><span class="muted">' + F.esc(r.time) + '</span>' : '') + '</td>' +
+          '<td><b>' + nm + '</b>' + (r.demo ? ' <span class="badge">demo</span>' : '') + '</td>' +
+          '<td class="mono small">' + (r.phone ? F.digits(F.esc(r.phone), S.settings.khDigits) : '<span class="muted">—</span>') + '</td>' +
+          '<td>' + (r.location ? F.esc(r.location) : '<span class="muted">—</span>') + '</td>' +
+          '<td class="num"><b>' + (r.currency === 'USD' ? '$' + fmtNum(r.amount, 2) : fmtNum(r.amount) + ' <small>រៀល</small>') + '</b></td>' +
+          '<td class="num mono small">' + fmtNum(Math.round(c.khr)) + '</td>' +
+          '<td class="num mono small">' + fmtNum(c.usd, 2) + '</td>' +
+          '<td class="small muted">' + (r.note ? highlight(r.note, q) : '') + '</td>' +
+          '<td><div class="row" style="gap:4px;justify-content:flex-end">' +
+          '<button class="btn icon sm ghost" data-edit="' + r.id + '" title="កែ">' + ICON.edit + '</button>' +
+          '<button class="btn icon sm ghost" data-del="' + r.id + '" title="លុប" style="color:var(--danger)">' + ICON.trash + '</button>' +
+          '</div></td></tr>';
+      });
+      html += '</tbody></table></div>';
+      html += '<div class="pager" style="padding:10px 14px">' +
+        '<span>ទំព័រ ' + fmtNum(S.page) + ' / ' + fmtNum(pages) + '</span><div class="row" style="gap:6px">' +
+        '<button class="btn sm" data-page="' + (S.page - 1) + '"' + (S.page <= 1 ? ' disabled' : '') + '>← មុន</button>' +
+        '<button class="btn sm" data-page="' + (S.page + 1) + '"' + (S.page >= pages ? ' disabled' : '') + '>ក្រោយ →</button></div></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+  function chip(group, val, label) {
+    var on = S[group] === val;
+    return '<button class="chip' + (on ? ' on' : '') + '" data-chipgroup="' + group + '" data-chipval="' + val + '">' + label + '</button>';
+  }
+  var sortState = { key: 'new', dir: -1 };
+  function sortFn(a, b) {
+    if (sortState.key === 'name') return String(a.name).localeCompare(String(b.name)) * sortState.dir;
+    if (sortState.key === 'amount') return ((+a.amount || 0) - (+b.amount || 0)) * sortState.dir;
+    return ((a.date || '') + (a.time || '')).localeCompare((b.date || '') + (b.time || '')) * sortState.dir;
+  }
+  function sortLabel() {
+    var names = { new: 'ថ្មីបំផុត', amount: 'ចំនួនធំបំផុត', name: 'ឈ្មោះ ក→អ' };
+    return '⇅ ' + names[sortState.key];
+  }
+  function highlight(text, q) {
+    var t = F.esc(text || '');
+    if (!q) return t;
+    var lo = F.norm(q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try { return t.replace(new RegExp('(' + lo + ')', 'ig'), '<mark style="background:var(--accent-soft);color:inherit;border-radius:3px">$1</mark>'); } catch (e) { return t; }
+  }
+
+  /* ================= VIEW: របាយការណ៍ ================= */
+  function reportData() {
+    var list = S.records.filter(reportScope);
+    var sum = EX.summary(list, S.settings.rate);
+    return { list: list, sum: sum };
+  }
+  function viewReport() {
+    var d = reportData();
+    var s = d.sum;
+    var filterStr = (S.locFilter ? 'ទីកន្លែង៖ ' + S.locFilter : '') + (S.monthFilter ? (S.locFilter ? ' · ' : '') + 'ខែ៖ ' + monthLabel(S.monthFilter) : '');
+    var locs = locations(), mons = months();
+    var html = '<div class="stats grid" style="margin-bottom:14px">' +
+      statCard(ICON.record, 'ភ្ញៀវសរុប', fmtNum(s.count) + ' <small>នាក់</small>') +
+      statCard(ICON.cash, 'ប្រាក់រៀលសរុប', fmtR(s.khr)) +
+      statCard(ICON.dollar, 'ប្រាក់ដុល្លារសរុប', fmtU(s.usd)) +
+      statCard(ICON.pin, 'ទីកន្លែងសរុប', fmtNum(s.locs) + ' <small>កន្លែង</small>') +
+      '</div>';
+
+    html += '<div class="card" style="margin-bottom:14px"><div class="row wrap" style="justify-content:space-between">' +
+      '<div class="row wrap">' +
+      '<select id="rLoc" style="width:auto"><option value="">ទីកន្លែងទាំងអស់</option>' +
+      locs.map(function (l) { return '<option' + (S.locFilter === l ? ' selected' : '') + '>' + F.esc(l) + '</option>'; }).join('') + '</select>' +
+      '<select id="rMonth" style="width:auto"><option value="">គ្រប់ខែ</option>' +
+      mons.map(function (m) { return '<option value="' + m + '"' + (S.monthFilter === m ? ' selected' : '') + '>' + monthLabel(m) + '</option>'; }).join('') + '</select>' +
+      (filterStr ? '<button class="btn sm ghost" data-act="clearfilters">✕ សម្អាតតម្រង</button>' : '') +
+      '</div>' +
+      '<div class="row wrap">' +
+      '<button class="btn" data-act="exportExcel">' + ICON.excel + 'Export Excel</button>' +
+      '<button class="btn" data-act="exportPDF">' + ICON.pdf + 'Export PDF</button>' +
+      '<button class="btn" data-act="print">' + ICON.print + 'បោះពុម្ព</button>' +
+      '<button class="btn" data-act="copySummary">' + ICON.copy + 'ចម្លងសង្ខេប</button>' +
+      '</div></div>' + (filterStr ? '<div class="small muted" style="margin-top:8px">🔎 តម្រងបច្ចុប្បន្ន៖ ' + F.esc(filterStr) + '</div>' : '') + '</div>';
+
+    /* charts */
+    var donutData = s.rows.map(function (d2) { return { label: d2.loc + ' (' + d2.count + ' នាក់)', value: d2.count }; });
+    var barData = s.rows.map(function (d2) { return { label: d2.loc, value: d2.khr, disp: F.nf(Math.round(d2.khr)) + ' ៛' }; });
+    html += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(320px,1fr));margin-bottom:14px">' +
+      '<div class="card"><div class="card-h"><h3>សមាមាត្រភ្ញៀវតាមទីកន្លែង</h3></div>' +
+      '<div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div style="flex:0 0 170px">' + CH.donut(donutData, { size: 170 }) + '</div>' +
+      '<div class="legend" style="flex-direction:column;align-items:flex-start;gap:7px">' +
+      s.rows.map(function (d2, i) {
+        return '<span><i style="background:' + CH.color(i) + '"></i>' + F.esc(d2.loc) + ' — <b>' + fmtNum(d2.count) + '</b> នាក់ · ' + fmtNum(d2.pct, 1) + '%</span>';
+      }).join('') + '</div></div></div>' +
+      '<div class="card"><div class="card-h"><h3>ប្រាក់ចំណងដៃតាមទីកន្លែង <span class="hint small">(គិតជា រៀល)</span></h3></div>' +
+      CH.bars(barData) + '</div></div>';
+
+    /* summary table */
+    html += '<div class="card" style="padding:0"><div class="card-h" style="padding:14px 16px 10px"><h3>សង្ខេបតាមទីកន្លែង</h3><span class="hint small">ចុចលើជួរដើម្បីតម្រៀប</span></div>';
+    if (!s.rows.length) html += '<div class="empty">' + ICON.report + '<div>មិនមានទិន្នន័យ</div></div>';
+    else {
+      html += '<div class="tbl-wrap" style="border:0"><table class="tbl"><thead><tr><th>ទីកន្លែង</th><th class="num">ចំនួនភ្ញៀវ</th><th class="num">សរុបរៀល</th><th class="num">សរុបដុល្លារ</th><th class="num">% សរុប</th></tr></thead><tbody>' +
+        s.rows.map(function (d2, i) {
+          return '<tr><td><span class="badge" style="background:' + CH.color(i) + '22;color:' + CH.color(i) + '">●</span> <b>' + F.esc(d2.loc) + '</b></td>' +
+            '<td class="num">' + fmtNum(d2.count) + '</td><td class="num">' + fmtNum(Math.round(d2.khr)) + '</td>' +
+            '<td class="num">' + fmtNum(d2.usd, 2) + '</td><td class="num">' + fmtNum(d2.pct, 1) + '%</td></tr>';
+        }).join('') +
+        '</tbody><tfoot><tr><td>សរុប</td><td class="num">' + fmtNum(s.count) + '</td><td class="num">' + fmtNum(Math.round(s.khr)) + '</td><td class="num">' + fmtNum(s.usd, 2) + '</td><td class="num">100%</td></tr></tfoot></table></div>';
+    }
+    html += '</div>';
+    return html;
+  }
+  function monthLabel(m) {
+    var p = String(m).split('-');
+    return F.MONTHS[(+p[1] || 1) - 1] + ' ' + p[0];
+  }
+
+  /* ================= VIEW: បញ្ចូលទិន្នន័យរួម ================= */
+  function viewMerge() {
+    var m = S.merge;
+    var html = '<div class="card" style="margin-bottom:14px"><div class="card-h"><h3>' + ICON.merge + ' បញ្ចូលទិន្នន័យរួម</h3>' +
+      '<span class="hint small">បញ្ចូលឯកសារពីទូរស័ព្ទ ឬកុំព្យូទ័រផ្សេង (JSON / CSV / Excel) រួចរួមបញ្ចូលគ្នាដោយឆ្លងកាត់ការត្រួតពិនិត្យទិន្នន័យស្ទួន</span></div>' +
+      '<label class="drop" id="dropZone">' + ICON.file + '<div style="margin-top:8px"><b>ជ្រើសរើសឯកសារ</b></div>' +
+      '<div class="small">ឬអូសឯកសារមកដាក់ទីនេះ — ទ្រង់ទ្រាយ .json .csv .xls .xlsx</div>' +
+      '<input type="file" id="mergeFile" accept=".json,.csv,.xls,.xlsx,.txt" style="display:none"></label>' +
+      '<div id="mergeBusy" style="display:none;margin-top:10px"><div class="progress"><i style="width:40%;animation:none"></i></div><div class="small muted center" style="margin-top:6px">កំពុងវិភាគឯកសារ…</div></div></div>';
+
+    if (m && m.result) {
+      var st = m.result.stats;
+      html += '<div class="stats grid" style="margin-bottom:14px">' +
+        statCard(ICON.file, 'ឯកសារសរុប', fmtNum(st.total) + ' <small>កំណត់ហេតុ</small>', F.esc(m.name)) +
+        statCard(ICON.inbox, 'ទិន្នន័យថ្មី', '<span style="color:var(--ok)">' + fmtNum(st.newCount) + '</span> <small>កំណត់ហេតុ</small>') +
+        statCard(ICON.copy, 'ទិន្នន័យស្ទួន', '<span style="color:var(--warn)">' + fmtNum(st.dupCount) + '</span> <small>កំណត់ហេតុ</small>') +
+        statCard(ICON.db, 'មិនត្រឹមត្រូវ', fmtNum(st.invalid) + ' <small>ជួរ</small>') +
+        '</div>';
+      var preview = m.result.items.slice(0, 15);
+      html += '<div class="card" style="padding:0;margin-bottom:14px"><div class="card-h" style="padding:14px 16px 10px"><h3>មើលជាមុន' + (m.result.items.length > 15 ? ' (១៥ជួរដំបូង)' : '') + '</h3>' +
+        '<div class="row" style="gap:8px">' +
+        '<button class="btn pri sm" data-act="importnew"' + (st.newCount ? '' : ' disabled') + '>បញ្ចូលតែទិន្នន័យថ្មី (' + fmtNum(st.newCount) + ')</button>' +
+        '<button class="btn sm" data-act="importall"' + (st.total - st.invalid ? '' : ' disabled') + '>បញ្ចូលទាំងអស់</button>' +
+        '<button class="btn ghost sm" data-act="mergecancel">បោះបង់</button></div></div>' +
+        '<div class="tbl-wrap" style="border:0"><table class="tbl"><thead><tr><th>ស្ថានភាព</th><th>ឈ្មោះ</th><th>ទីកន្លែង</th><th class="num">ចំនួន</th><th>ថ្ងៃទី</th><th>ទូរស័ព្ទ</th></tr></thead><tbody>' +
+        preview.map(function (it) {
+          var badge = it.status === 'new' ? '<span class="badge new">ថ្មី</span>' : it.status === 'dup' ? '<span class="badge dup">ស្ទួន</span>' : '<span class="badge bad">ខុសទម្រង់</span>';
+          var r = it.rec;
+          return '<tr><td>' + badge + '</td><td><b>' + F.esc(r.name) + '</b></td><td>' + F.esc(r.location || '—') + '</td>' +
+            '<td class="num">' + (r.currency === 'USD' ? '$' + F.nf(r.amount, 2) : F.nf(r.amount) + ' រៀល') + '</td>' +
+            '<td class="small">' + F.esc(r.date || '') + '</td><td class="small mono">' + F.esc(r.phone || '') + '</td></tr>';
+        }).join('') + '</tbody></table></div></div>';
+    } else {
+      html += '<div class="card"><div class="card-h"><h3>ទម្រង់ឯកសារដែលគាំទ្រ</h3></div>' +
+        '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">' +
+        '<div><div class="kv"><span>ឯកសារ <b>.json</b> (backup របស់កម្មវិធី)</span></div><div class="small muted">ទាញយកពីផ្នែក «ការកំណត់ → គ្រប់គ្រង Database» ដើម្បីចែករំលែករវាងឧបករណ៍</div></div>' +
+        '<div><div class="kv"><span>ឯកសារ <b>.csv</b> / <b>.xls/.xlsx</b></span></div><div class="small muted">កម្មវិធីនឹងកំណត់អត្តសញ្ញាណជួរឈ្មោះ ឈ្មោះ/ទីកន្លែង/ប្រាក់/រូបិយប័ណ្ណ/ទូរស័ព្ទ/ថ្ងៃ ដោយស្វ័យប្រវត្តិ</div></div>' +
+        '<div><div class="kv"><span>ការកំណត់ទិន្នន័យស្ទួន</span></div><div class="small muted">«ឈ្មោះ + ចំនួន (គិតជារៀល) + ថ្ងៃទី» ដូចគ្នា = ស្ទួន</div></div>' +
+        '</div></div>';
+    }
+    return html;
+  }
+
+  function handleMergeFile(file) {
+    if (!file) return;
+    var busy = document.getElementById('mergeBusy');
+    if (busy) busy.style.display = 'block';
+    var ext = (file.name.split('.').pop() || '').toLowerCase();
+    var finish = function (rows, err) {
+      if (busy) busy.style.display = 'none';
+      if (err) { KCD_toast('អានឯកសារមិនបានសម្រេច៖ ' + err, 'err'); return; }
+      var res = MG.classify(rows, S.records, S.settings.rate);
+      S.merge = { name: file.name, result: res };
+      render();
+      KCD_toast('វិភាគរួចរាល់៖ ថ្មី ' + res.stats.newCount + ' · ស្ទួន ' + res.stats.dupCount, 'ok');
+    };
+    if (ext === 'xls' || ext === 'xlsx') {
+      var fr0 = new FileReader();
+      fr0.onload = function () {
+        var doParse = function () {
+          try {
+            var wb = root.XLSX.read(new Uint8Array(fr0.result), { type: 'array' });
+            var ws = wb.Sheets[wb.SheetNames[0]];
+            var rows = root.XLSX.utils.sheet_to_json(ws, { defval: '' });
+            finish(MG.normalize(rows));
+          } catch (e) { finish([], e.message); }
+        };
+        if (root.XLSX) doParse();
+        else {
+          var s = document.createElement('script');
+          s.src = 'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js';
+          s.onload = doParse;
+          s.onerror = function () { finish([], 'ត្រូវការអ៊ីនធឺណិតដើម្បីអាន .xlsx — សូមប្រើ .csv ឬ .json'); };
+          document.head.appendChild(s);
+        }
+      };
+      fr0.readAsArrayBuffer(file);
+      return;
+    }
+    var fr = new FileReader();
+    fr.onload = function () {
+      try { finish(MG.fromText(file.name, String(fr.result))); } catch (e) { finish([], e.message); }
+    };
+    fr.onerror = function () { finish([], 'read error'); };
+    fr.readAsText(file, 'utf-8');
+  }
+  function doImport(which) {
+    var m = S.merge;
+    if (!m) return;
+    var items = m.result.items.filter(function (it) { return it.status !== 'invalid' && (which === 'all' || it.status === 'new'); });
+    var now = Date.now();
+    items.forEach(function (it) {
+      var r = it.rec;
+      S.records.push({ id: F.uid(), name: r.name, phone: r.phone, location: r.location, currency: r.currency === 'USD' ? 'USD' : 'KHR', amount: r.amount, date: r.date || F.todayISO(), time: r.time || '', note: r.note, created: now, imported: m.name, updated: now });
+    });
+    S.merge = null;
+    render();
+    persist().then(function () { KCD_toast('បានបញ្ចូល ' + items.length + ' កំណត់ហេតុ ✓', 'ok'); });
+  }
+
+  /* ================= VIEW: ការកំណត់ ================= */
+  var ACCENTS = ['#6366f1', '#8b5cf6', '#3b82f6', '#0ea5e9', '#06b6d4', '#14b8a6', '#22c55e', '#84cc16', '#f59e0b', '#f97316', '#ef4444', '#ec4899', '#64748b', '#0f766e'];
+  function viewSettings() {
+    var s = S.settings;
+    var html = '';
+    /* រូបរាង */
+    html += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:14px">' +
+      '<div class="card"><div class="card-h"><h3>' + ICON.sun + ' ពណ៌ផ្ទៃ</h3></div>' +
+      '<div class="chips">' +
+      '<button class="chip' + (s.theme === 'light' ? ' on' : '') + '" data-set="theme" data-val="light">☀️ ពន្លឺ</button>' +
+      '<button class="chip' + (s.theme === 'dark' ? ' on' : '') + '" data-set="theme" data-val="dark">🌙 ងងឹត</button></div></div>' +
+      '<div class="card"><div class="card-h"><h3>' + ICON.palette + ' ពណ៌ចម្បង</h3></div>' +
+      '<div class="swatches">' + ACCENTS.map(function (c) { return '<button class="swatch' + (s.accent === c ? ' on' : '') + '" data-set="accent" data-val="' + c + '" style="background:' + c + '" title="' + c + '"></button>'; }).join('') +
+      '<label class="swatch" style="background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);display:grid;place-items:center" title="គ្រប់ពណ៌"><input type="color" value="' + s.accent + '" id="accentPick" style="opacity:0;width:100%;height:100%;cursor:pointer"></label></div></div>' +
+      '<div class="card"><div class="card-h"><h3>🔤 ទំហំអក្សរ</h3></div>' +
+      '<div class="chips">' +
+      '<button class="chip' + (s.fs === 'sm' ? ' on' : '') + '" data-set="fs" data-val="sm">តូច</button>' +
+      '<button class="chip' + (s.fs === 'md' ? ' on' : '') + '" data-set="fs" data-val="md">មធ្យម</button>' +
+      '<button class="chip' + (s.fs === 'lg' ? ' on' : '') + '" data-set="fs" data-val="lg">ធំ</button></div></div>' +
+      '<div class="card"><div class="card-h"><h3>' + ICON.cash + ' រូបិយប័ណ្ណ</h3></div>' +
+      '<div class="chips" style="margin-bottom:10px">' +
+      '<button class="chip' + (s.currency === 'KHR' ? ' on' : '') + '" data-set="currency" data-val="KHR">៛ រៀល</button>' +
+      '<button class="chip' + (s.currency === 'USD' ? ' on' : '') + '" data-set="currency" data-val="USD">$ ដុល្លារ</button>' +
+      '<button class="chip' + (s.khDigits ? ' on' : '') + '" data-toggle="khDigits">លេខខ្មែរ ០-៩</button></div>' +
+      '<div class="field"><label>អត្រាប្តូរប្រាក់ (១$ = ? រៀល)</label><input type="number" id="rate" value="' + s.rate + '" min="1" step="10"></div></div>' +
+      '</div>';
+
+    /* PDF */
+    html += '<div class="card" style="margin-bottom:14px"><div class="card-h"><h3>' + ICON.pdf + ' កំណត់របាយការណ៍ PDF</h3>' +
+      '<span class="hint small">ប្រើប៊ូតុង <b>Export PDF</b> នៅផ្ទាំងរបាយការណ៍</span></div>' +
+      '<div class="form-grid">' +
+      '<div class="field"><label>ចំណងជើងឯកសារ</label><input type="text" data-f="pdfTitle" value="' + F.escAttr(s.pdfTitle) + '"></div>' +
+      '<div class="field"><label>ឈ្មោះអង្គភាព/គ្រួសារ (ក្បាល)</label><input type="text" data-f="pdfOrg" value="' + F.escAttr(s.pdfOrg) + '" placeholder="ឧ. គ្រួសារ លោក អ៊ុំ"></div>' +
+      '<div class="field"><label>ខាងក្រោម (footer)</label><input type="text" data-f="pdfFooter" value="' + F.escAttr(s.pdfFooter) + '"></div>' +
+      '<div class="field"><label>ក្រដាស</label><select data-f="paper"><option value="a4"' + (s.paper === 'a4' ? ' selected' : '') + '>A4</option><option value="a5"' + (s.paper === 'a5' ? ' selected' : '') + '>A5</option></select></div>' +
+      '<div class="field"><label>ទិសដៅ</label><select data-f="orientation"><option value="portrait"' + (s.orientation === 'portrait' ? ' selected' : '') + '>បញ្ឈរ</option><option value="landscape"' + (s.orientation === 'landscape' ? ' selected' : '') + '>ផ្តេក</option></select></div>' +
+      '<div class="field"><label>បច្ចេកវិធី</label><select data-f="pdfEngine"><option value="print"' + (s.pdfEngine === 'print' ? ' selected' : '') + '>Print-to-PDF (ខ្មែរពេញលេញ ✓)</option><option value="jspdf"' + (s.pdfEngine === 'jspdf' ? ' selected' : '') + '>jsPDF (ត្រូវការអ៊ីនធឺណិត)</option></select></div>' +
+      '</div>' +
+      '<div class="chips" style="margin-top:10px">' +
+      '<button class="chip' + (s.showDate ? ' on' : '') + '" data-toggle="showDate">បង្ហាញកាលបរិច្ឆេទ</button>' +
+      '<button class="chip' + (s.showSign ? ' on' : '') + '" data-toggle="showSign">កន្លែងហត្ថលេខា</button>' +
+      '<button class="chip' + (s.showCharts ? ' on' : '') + '" data-toggle="showCharts">បញ្ចូលគំនូសតាង</button>' +
+      '</div>' +
+      '<div class="row" style="margin-top:12px;align-items:center">' +
+      '<label class="btn sm">🖼️ ផ្ទុករូបពិមុត (logo)<input type="file" id="logoFile" accept="image/*" style="display:none"></label>' +
+      (s.logo ? '<img src="' + s.logo + '" style="height:34px;border-radius:6px;border:1px solid var(--border)"><button class="btn sm danger" data-set="logo" data-val="">ដកចេញ</button>' : '<span class="small muted">មិនទាន់មាន</span>') +
+      '</div></div>';
+
+    /* QR */
+    html += '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-bottom:14px">' +
+      '<div class="card"><div class="card-h"><h3>' + ICON.qr + ' កំណត់ QR Code</h3></div>' +
+      '<div class="field" style="margin-bottom:10px"><label>អត្ថបទ / តំណភ្ជាប់ក្នុង QR</label>' +
+      '<textarea rows="3" id="qrText" placeholder="ឧ. https://… ឬព័ត៌មានទំនាក់ទំនង">' + F.escAttr(s.qrText || location.href.split('#')[0]) + '</textarea></div>' +
+      '<div class="row" style="margin-bottom:10px">' +
+      '<div class="field"><label>កម្រិតជួសជុល (ECC)</label><select id="qrEcc">' + ['L', 'M', 'Q', 'H'].map(function (e) { return '<option' + (s.qrEcc === e ? ' selected' : '') + '>' + e + '</option>'; }).join('') + '</select></div>' +
+      '<div class="field"><label>ទំហំ</label><select id="qrSize"><option value="6"' + (s.qrSize == 6 ? ' selected' : '') + '>តូច</option><option value="8"' + (s.qrSize == 8 ? ' selected' : '') + '>មធ្យម</option><option value="12"' + (s.qrSize == 12 ? ' selected' : '') + '>ធំ</option></select></div></div>' +
+      '<div class="row"><button class="btn pri sm" data-act="genqr">បង្កើត QR</button>' +
+      '<button class="btn sm" data-act="qrsvg">ទាញយក SVG</button><button class="btn sm" data-act="qrpng">ទាញយក PNG</button></div>' +
+      '<div class="small muted" style="margin-top:8px">ចំណាំ៖ QR គាំទ្រអត្ថបទខ្មែរ (UTF-8) រហូតដល់ ~២៧០ បៃ។</div></div>' +
+      '<div class="card"><div class="card-h"><h3>មើលជាមុន QR</h3></div><div class="qr-box" id="qrBox"><div class="muted small">ចុច «បង្កើត QR»</div></div></div>' +
+      '</div>';
+
+    /* Database management */
+    html += '<div class="card" style="margin-bottom:14px"><div class="card-h"><h3>' + ICON.db + ' គ្រប់គ្រង Database</h3>' +
+      '<span class="hint small">ប្រភព៖ ' + DB.kind() + ' · កំណែ v' + APP_VERSION + '</span></div>' +
+      '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(180px,1fr));margin-bottom:12px">' +
+      '<div class="kv"><span>ចំនួនកំណត់ហេតុ</span><b>' + F.nf(S.records.length) + '</b></div>' +
+      '<div class="kv"><span>ទិន្នន័យ demo</span><b>' + (localStorage.getItem(DEMO_FLAG) ? 'មាន' : 'គ្មាន') + '</b></div>' +
+      '<div class="kv"><span>កន្លែងផ្ទុកប្រហែល</span><b id="dbSize">…</b></div></div>' +
+      '<div class="row wrap">' +
+      '<button class="btn" data-act="backup">⬇ Export Backup (.json)</button>' +
+      '<label class="btn">⬆ Import Backup (.json)<input type="file" id="importBackup" accept=".json" style="display:none"></label>' +
+      '<button class="btn" data-act="exportCsvFile">Export CSV</button>' +
+      '<button class="btn" data-act="demo">បញ្ចូលទិន្នន័យ Demo</button>' +
+      '<button class="btn danger" data-act="wipe">លុបទិន្នន័យទាំងអស់</button>' +
+      '<button class="btn ghost" data-act="wipeSettings">កំណត់ការកំណត់ឡើងវិញ</button>' +
+      '</div></div>';
+
+    /* install */
+    html += '<div class="card"><div class="card-h"><h3>' + ICON.install + ' ដំឡើងលើ Desktop និងទូរស័ព្ទ</h3></div>' +
+      '<div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">' +
+      '<div><b class="small">💻 កុំព្យូទ័រ (Chrome/Edge)</b><div class="small muted">១. បើកកម្មវិធីតាម browser<br>២. ចុចរូប <b>Install</b> នៅថ្នាក់លើរបស់ address bar ឬ ⋮ → «Install app»<br>៣. កម្មវិធីលេចនៅ Desktop — ប្រើបានទោះគ្មានអ៊ីនធឺណិត</div></div>' +
+      '<div><b class="small">📱 Android (Chrome)</b><div class="small muted">⋮ → «Add to Home screen» / «Install app»</div></div>' +
+      '<div><b class="small">🍎 iPhone/iPad (Safari)</b><div class="small muted">Share → «Add to Home Screen»</div></div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start"><button class="btn pri" id="installBtn"' + (S.deferredPrompt ? '' : ' disabled') + '>' + ICON.install + ' ដំឡើងឥឡូវនេះ</button>' +
+      '<div class="small muted">' + (S.deferredPrompt ? 'រួចរាល់សម្រាប់ដំឡើង ✓' : 'បើកតាម HTTP(S) ឬ hosting នឹងបង្ហាញប៊ូតុងដំឡើង') + '</div>' +
+      '<div class="small muted">ចង់បាន APK/Windows installer ពិតប្រាកដ? មើលឯកសារ README.md (Capacitor/Electron)</div></div>' +
+      '</div></div>';
+    return html;
+  }
+
+  /* demo data */
+  var NAMES = ['សុខ សុភា', 'ចាន់ ដារ៉ា', 'លី វណ្ណៈ', 'នូ បុប្ផា', 'ហ៊ុន សំណាង', 'កែវ ច័ន្ទបូរណ៍', 'រិទ្ធី ពិសី', 'ស៊ុន ច័ន្ទរតនា', 'យុទ្ធ សុធា', 'ថន សុខេន', 'អែម សីហា', 'វង្ស ទិត្យា', 'ផា រតនា', 'សៅ សុភាវុធ', 'និម ចន្ថា', 'លៀង ដារ៉ុង', 'ស្រ៊ុន សុវណ្ណ', 'ប៊ុណ្ណី រតន៍', 'ជេន វិសាល', 'ភក្តី សុខលីម', 'សុវត្ថិ មនោ', 'អ៊ុន លីដា', 'នី សុធារ៉ា', 'ច័ន្ទ វិចិត្រ', 'សែន សម្បត្តិ', 'តូច ច័ន្ទណា', 'ហេង ស៊េង', 'មុន្នី កែវ', 'សុខលី ផេង', 'រ៉ា ចន្ទមុនី'];
+  var LOCS = ['ភ្នំពេញ', 'សៀមរាប', 'ព្រៃវែង', 'កណ្តាល', 'បាត់ដំបង', 'កំពង់ចាម'];
+  function loadDemo() {
+    var now = new Date();
+    var recs = [];
+    for (var i = 0; i < 52; i++) {
+      var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - Math.floor(Math.random() * 3));
+      var usd = Math.random() < 0.3;
+      recs.push({
+        id: F.uid(), name: NAMES[(i * 7 + 3) % NAMES.length] + (i > 29 ? ' ' + (i % 5) : ''),
+        phone: '0' + (10 + Math.floor(Math.random() * 89)) + ' ' + String(100 + Math.floor(Math.random() * 899)) + ' ' + String(100 + Math.floor(Math.random() * 899)),
+        location: LOCS[Math.floor(Math.random() * LOCS.length)],
+        currency: usd ? 'USD' : 'KHR',
+        amount: usd ? [10, 20, 30, 50, 100][Math.floor(Math.random() * 5)] : [10000, 20000, 30000, 40000, 50000, 100000, 200000][Math.floor(Math.random() * 7)],
+        date: F.todayISO(d), time: String(7 + Math.floor(Math.random() * 12)).padStart(2, '0') + ':' + String(Math.floor(Math.random() * 6) * 10).padStart(2, '0'),
+        note: Math.random() < 0.2 ? 'សូមអនុមោទនា' : '', demo: true, created: Date.now() - i * 1000
+      });
+    }
+    S.records = recs.concat(S.records);
+    localStorage.setItem(DEMO_FLAG, '1');
+    render();
+    persist().then(function () { KCD_toast('បានបញ្ចូលទិន្នន័យ demo ✓', 'ok'); });
+  }
+
+  /* QR render */
+  var qrCache = null;
+  function genQR(silent) {
+    var txt = (document.getElementById('qrText') || {}).value || location.href;
+    var ecc = (document.getElementById('qrEcc') || {}).value || 'M';
+    var size = +((document.getElementById('qrSize') || {}).value || 8);
+    try {
+      var q = QR.encode(txt, ecc);
+      qrCache = q;
+      document.getElementById('qrBox').innerHTML = QR.toSVG(q, { pixelSize: size });
+      if (!silent) KCD_toast('បានបង្កើត QR ✓', 'ok');
+    } catch (e) {
+      var msg = e && e.message === 'CONTENT_TOO_LONG' ? 'អត្ថបទវែងពេកសម្រាប់ QR (កំណត់ប្រហែល ២៧០ តួអក្សរ)' : 'QR error: ' + (e && e.message);
+      KCD_toast(msg, 'err');
+      qrCache = null;
+    }
+  }
+
+  /* ================= render ================= */
+  var VIEWS = { record: 'កត់ចំណងដៃ', report: 'របាយការណ៍', merge: 'បញ្ចូលទិន្នន័យរួម', settings: 'ការកំណត់' };
+  var VIEW_ICONS = { record: 'record', report: 'report', merge: 'merge', settings: 'settings' };
+  function render() {
+    var v = S.view;
+    document.querySelectorAll('[data-view]').forEach(function (b) { b.classList.toggle('on', b.dataset.view === v); });
+    var today = F.longDateKh();
+    var head = '<div class="topbar"><div><h2>' + VIEWS[v] + '</h2><div class="sub">' + today + '</div></div>' +
+      '<div class="row" style="gap:8px">' +
+      (v === 'report' || v === 'record' ? '<button class="btn icon" data-act="toggleTheme" title="ពន្លឺ/ងងឹត">' + (S.settings.theme === 'dark' ? ICON.sun : ICON.moon) + '</button>' : '') +
+      (v === 'record' ? '<button class="btn pri" data-act="add">' + ICON.plus + '<span class="hide-sm">បន្ថែមភ្ញៀវ</span></button>' : '') +
+      '</div></div>';
+    var body = v === 'record' ? viewRecord() : v === 'report' ? viewReport() : v === 'merge' ? viewMerge() : viewSettings();
+    document.getElementById('view').innerHTML = head + body;
+    bindView(v);
+  }
+
+  function bindView(v) {
+    if (v === 'record') {
+      var qEl = document.getElementById('q');
+      if (qEl) {
+        qEl.oninput = debounce(function () { S.q = qEl.value; S.page = 1; render(); var e = document.getElementById('q'); e.focus(); e.setSelectionRange(e.value.length, e.value.length); }, 260);
+      }
+      var locSel = document.getElementById('locSel');
+      if (locSel) locSel.onchange = function () { S.locFilter = locSel.value; S.page = 1; render(); };
+      document.querySelectorAll('[data-edit]').forEach(function (b) { b.onclick = function () { openEdit(b.dataset.edit); }; });
+      document.querySelectorAll('[data-del]').forEach(function (b) { b.onclick = function () { delRecord(b.dataset.del); }; });
+      document.querySelectorAll('[data-page]').forEach(function (b) { b.onclick = function () { if (!b.disabled) { S.page = +b.dataset.page; render(); window.scrollTo(0, 0); } }; });
+      var sortBtn = document.querySelector('[data-act="sort"]');
+      if (sortBtn) sortBtn.onclick = function () {
+        var order = ['new', 'amount', 'name'];
+        sortState.key = order[(order.indexOf(sortState.key) + 1) % 3];
+        render();
+      };
+    }
+    if (v === 'report') {
+      var rl = document.getElementById('rLoc'); if (rl) rl.onchange = function () { S.locFilter = rl.value; render(); };
+      var rm = document.getElementById('rMonth'); if (rm) rm.onchange = function () { S.monthFilter = rm.value; render(); };
+    }
+    if (v === 'merge') {
+      var f = document.getElementById('mergeFile');
+      if (f) f.onchange = function () { handleMergeFile(f.files[0]); f.value = ''; };
+      var dz = document.getElementById('dropZone');
+      if (dz) {
+        ['dragover', 'dragenter'].forEach(function (ev) { dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.add('hot'); }); });
+        ['dragleave', 'drop'].forEach(function (ev) { dz.addEventListener(ev, function (e) { e.preventDefault(); dz.classList.remove('hot'); }); });
+        dz.addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) handleMergeFile(e.dataTransfer.files[0]); });
+      }
+    }
+    if (v === 'settings') {
+      var pick = document.getElementById('accentPick');
+      if (pick) pick.oninput = function () { S.settings.accent = pick.value; saveSettings(); render(); };
+      ['pdfTitle', 'pdfOrg', 'pdfFooter'].forEach(function (k) {
+        var el = document.querySelector('[data-f="' + k + '"]');
+        if (el) el.onchange = function () { S.settings[k] = el.value; saveSettings(); };
+      });
+      document.querySelectorAll('[data-f="paper"],[data-f="orientation"],[data-f="pdfEngine"]').forEach(function (el) {
+        el.onchange = function () { S.settings[el.dataset.f] = el.value; saveSettings(); };
+      });
+      var rateEl = document.getElementById('rate');
+      if (rateEl) rateEl.onchange = function () { var v2 = parseFloat(rateEl.value); if (v2 > 0) { S.settings.rate = v2; saveSettings(); KCD_toast('អត្រា៖ 1$ = ' + F.nf(v2) + ' រៀល', 'ok'); } };
+      var lf = document.getElementById('logoFile');
+      if (lf) lf.onchange = function () { handleLogo(lf.files[0]); };
+      var ib = document.getElementById('installBtn');
+      if (ib) ib.onclick = function () { if (S.deferredPrompt) { S.deferredPrompt.prompt(); S.deferredPrompt = null; } };
+      var imb = document.getElementById('importBackup');
+      if (imb) imb.onchange = function () { importBackup(imb.files[0]); imb.value = ''; };
+      estimateSize();
+      genQR(true);
+    }
+  }
+  function debounce(fn, ms) { var t; return function () { clearTimeout(t); t = setTimeout(fn, ms); }; }
+
+  function openEdit(id) {
+    var r = S.records.find(function (x) { return x.id === id; });
+    if (!r) return;
+    openModal('<h3>កែកំណត់ហេតុ</h3>' + recordForm(r), { after: function () { bindRecordForm(id); formFocus(); } });
+  }
+  function formFocus() { var e = document.querySelector('#recForm [name=name]'); if (e) setTimeout(function () { e.focus(); }, 50); }
+  function delRecord(id) {
+    var r = S.records.find(function (x) { return x.id === id; });
+    if (!r) return;
+    confirmBox('លុបកំណត់ហេតុ', 'តើលោកអ្នកប្រាកដទេ? នឹងលុប «' + r.name + ' — ' + (r.currency === 'USD' ? '$' + r.amount : r.amount + ' រៀល') + '» ចេញ។', 'លុប', true).then(function (yes) {
+      if (!yes) return;
+      S.records = S.records.filter(function (x) { return x.id !== id; });
+      DB.removeMany([id]);
+      render();
+      persist().then(function () { KCD_toast('បានលុប ✓', 'ok'); });
+    });
+  }
+
+  /* settings misc */
+  function handleLogo(file) {
+    if (!file) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var max = 420, sc = Math.min(1, max / Math.max(img.width, img.height));
+        var cv = document.createElement('canvas');
+        cv.width = Math.round(img.width * sc); cv.height = Math.round(img.height * sc);
+        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+        S.settings.logo = cv.toDataURL('image/png');
+        saveSettings(); render(); KCD_toast('បានរក្សាទុក logo ✓', 'ok');
+      };
+      img.src = fr.result;
+    };
+    fr.readAsDataURL(file);
+  }
+  function estimateSize() {
+    var el = document.getElementById('dbSize');
+    if (!el) return;
+    var approx = JSON.stringify(S.records).length;
+    el.textContent = F.nf(Math.round(approx / 1024)) + ' KB';
+    if (navigator.storage && navigator.storage.estimate) {
+      navigator.storage.estimate().then(function (e) { if (e.usage) el.textContent += ' (device ' + F.nf(Math.round(e.usage / 1048576 * 10) / 10) + ' MB)'; }).catch(function () {});
+    }
+  }
+  function importBackup(file) {
+    if (!file) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      try {
+        var parsed = EX.parseBackup(String(fr.result));
+        var n = parsed.records.length;
+        confirmBox('Import Backup', 'នឹងជំនួសទិន្នន័យបច្ចុប្បន្ន (' + F.nf(S.records.length) + ') ដោយឯកសារនេះ (' + F.nf(n) + ' កំណត់ហេតុ)' + (parsed.settings ? ' រួមទាំងការកំណត់។' : '។'), 'ជំនួស', true).then(function (yes) {
+          if (!yes) return;
+          S.records = parsed.records.map(function (r) { r.id = r.id || F.uid(); return r; });
+          if (parsed.settings) for (var k in parsed.settings) if (k in DEF_SETTINGS) S.settings[k] = parsed.settings[k];
+          saveSettings();
+          render();
+          persist().then(function () { KCD_toast('Import រួចរាល់ ✓', 'ok'); });
+        });
+      } catch (e) { KCD_toast('ឯកសារមិនមែនជា backup ត្រឹមត្រូវ', 'err'); }
+    };
+    fr.readAsText(file, 'utf-8');
+  }
+  function reportPrintOpts(needWin) {
+    var d = reportData();
+    var s = S.settings;
+    var chartsSvg = s.showCharts && d.sum.rows.length ?
+      '<div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">' + CH.donut(d.sum.rows.map(function (x) { return { label: x.loc, value: x.count }; }), { size: 150 }) + CH.bars(d.sum.rows.map(function (x) { return { label: x.loc, value: x.khr, disp: F.nf(Math.round(x.khr)) + ' ៛' }; }), { width: 360 }) + '</div>' : '';
+    var filterStr = (S.locFilter ? 'ទីកន្លែង៖ ' + S.locFilter : '') + (S.monthFilter ? (S.locFilter ? ' · ' : '') + 'ខែ៖ ' + monthLabel(S.monthFilter) : '');
+    return {
+      title: s.pdfTitle, org: s.pdfOrg, footer: s.pdfFooter, dateStr: s.showDate ? F.longDateKh() : '', filterStr: filterStr,
+      sum: d.sum, recs: d.list, rate: s.rate, showSign: s.showSign, showLogo: !!s.logo, logo: s.logo, chartsSvg: chartsSvg,
+      settings: s, filename: 'donation-' + F.todayISO() + '.pdf'
+    };
+  }
+
+  /* ================= actions ================= */
+  function action(a, el) {
+    var s = S.settings;
+    if (a === 'add') openModal('<h3>បន្ថែមភ្ញៀវ — កត់ចំណងដៃ</h3>' + recordForm(), { after: function () { bindRecordForm(null); formFocus(); } });
+    else if (a === 'toggleTheme') { s.theme = s.theme === 'dark' ? 'light' : 'dark'; saveSettings(); render(); }
+    else if (a === 'clearfilters') { S.locFilter = ''; S.monthFilter = ''; S.q = ''; S.dayFilter = 'all'; render(); }
+    else if (a === 'exportExcel') {
+      var d = reportData();
+      EX.download('ចំណងដៃ-' + F.todayISO() + '.xls', EX.xlsText(d.list, { rate: s.rate }), 'application/vnd.ms-excel');
+      KCD_toast('បាន Export Excel ✓', 'ok');
+    }
+    else if (a === 'exportCsvFile' || a === 'exportCsv') {
+      EX.download('ចំណងដៃ-' + F.todayISO() + '.csv', EX.csvText(S.records, { rate: s.rate }), 'text/csv');
+      KCD_toast('បាន Export CSV ✓', 'ok');
+    }
+    else if (a === 'exportPDF') {
+      KCD_toast('កំពុងត្រៀម PDF… (ជ្រើសរើស «Save as PDF» ក្នុងប្រអប់បោះពុម្ព)', 'ok');
+      EX.exportPDF(reportPrintOpts(), s);
+    }
+    else if (a === 'print') { EX.print(reportPrintOpts()); }
+    else if (a === 'copySummary') {
+      var d2 = reportData();
+      var lines = ['របាយការណ៍ប្រមូលចំណងដៃ (' + F.longDateKh() + ')',
+        'ភ្ញៀវសរុប៖ ' + F.nf(d2.sum.count) + ' នាក់', 'រៀលសរុប៖ ' + F.nf(Math.round(d2.sum.khr)), 'ដុល្លារសរុប៖ $' + F.nf(d2.sum.usd, 2),
+        '', ...d2.sum.rows.map(function (x) { return x.loc + ': ' + x.count + ' នាក់ · ' + F.nf(Math.round(x.khr)) + ' រៀល'; })];
+      copyText(lines.join('\n'));
+    }
+    else if (a === 'backup') { EX.download('kcd-backup-' + F.todayISO() + '.json', EX.backupJSON(S.records, S.settings), 'application/json'); KCD_toast('បាន Export Backup ✓', 'ok'); }
+    else if (a === 'demo') loadDemo();
+    else if (a === 'wipe') {
+      promptDanger('លុបទិន្នន័យទាំងអស់', '<div>នឹងលុបកំណត់ហេតុ <b>' + F.nf(S.records.length) + '</b> ទាំងអស់ចេញពី database។ សូមធ្វើ Export Backup មុនពេលលុប!</div>').then(function (yes) {
+        if (!yes) return;
+        S.records = []; localStorage.removeItem(DEMO_FLAG);
+        DB.clear().then(function () {
+          try { localStorage.setItem(LS_KEY_FALLBACK, '[]'); } catch (e) {}
+          S.cleared = Date.now();
+          render(); KCD_toast('បានលុបទិន្នន័យទាំងអស់', 'ok');
+        });
+      });
+    }
+    else if (a === 'wipeSettings') {
+      confirmBox('កំណត់ឡើងវិញ', 'ការកំណត់រូបរាង/PDF/QR នឹងត្រឡប់ទៅលំនាំដើម (ទិន្នន័យមិនបាត់)។', 'កំណត់ឡើងវិញ', false).then(function (yes) {
+        if (!yes) return;
+        S.settings = defaults(); localStorage.removeItem(SKEY); saveSettings(); render(); KCD_toast('បានកំណត់ឡើងវិញ ✓', 'ok');
+      });
+    }
+    else if (a === 'importnew') doImport('new');
+    else if (a === 'importall') doImport('all');
+    else if (a === 'mergecancel') { S.merge = null; render(); }
+    else if (a === 'genqr') genQR();
+    else if (a === 'qrsvg') { if (!qrCache) genQR(); if (!qrCache) return; EX.download('qrcode.svg', QR.toSVG(qrCache, { pixelSize: 10 }), 'image/svg+xml'); }
+    else if (a === 'qrpng') {
+      if (!qrCache) { genQR(); }
+      if (!qrCache) return;
+      var px = 10, dim = (qrCache.size + 8) * px;
+      var cv = document.createElement('canvas'); cv.width = dim; cv.height = dim;
+      var cx2 = cv.getContext('2d');
+      cx2.fillStyle = '#fff'; cx2.fillRect(0, 0, dim, dim); cx2.fillStyle = '#000';
+      for (var r = 0; r < qrCache.size; r++) for (var c = 0; c < qrCache.size; c++) if (qrCache.modules[r][c]) cx2.fillRect((c + 4) * px, (r + 4) * px, px, px);
+      cv.toBlob(function (b) { var a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'qrcode.png'; a.click(); });
+    }
+  }
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(function () { KCD_toast('បានចម្លងរួចរាល់ ✓', 'ok'); }, function () { fallbackCopy(t); });
+    else fallbackCopy(t);
+  }
+  function fallbackCopy(t) {
+    var ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); KCD_toast('បានចម្លងរួចរាល់ ✓', 'ok'); } catch (e) { KCD_toast('ចម្លងមិនបាន', 'err'); }
+    ta.remove();
+  }
+
+  /* ================= boot ================= */
+  function bindShell() {
+    document.querySelectorAll('[data-view]').forEach(function (b) {
+      b.addEventListener('click', function () { S.view = b.dataset.view; S.page = 1; render(); window.scrollTo(0, 0); });
+    });
+    document.body.addEventListener('click', function (e) {
+      var act = e.target.closest('[data-act]');
+      if (act) { e.preventDefault(); action(act.dataset.act, act); return; }
+      var st = e.target.closest('[data-set]');
+      if (st) { S.settings[st.dataset.set] = st.dataset.val === '' ? '' : st.dataset.val; saveSettings(); render(); return; }
+      var tg = e.target.closest('[data-toggle]');
+      if (tg) { var k = tg.dataset.toggle; S.settings[k] = !S.settings[k]; saveSettings(); render(); return; }
+      var cg = e.target.closest('[data-chipgroup]');
+      if (cg) { var g = cg.dataset.chipgroup, val = cg.dataset.chipval; S[g] = S[g] === val && g !== 'dayFilter' ? '' : val; if (g === 'dayFilter') S.dayFilter = val; S.page = 1; render(); return; }
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeModal();
+      if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)) { var q2 = document.getElementById('q'); if (q2) { q2.focus(); e.preventDefault(); } }
+    });
+  }
+  function boot() {
+    modalHost = document.getElementById('modalHost');
+    document.querySelectorAll('[data-icon]').forEach(function (el) { el.innerHTML = ICON[el.dataset.icon] || ''; });
+    loadSettings();
+    DB.init().then(function () { return DB.loadAll(); }).then(function (rows) {
+      S.records = rows.filter(function (r) { return r && (r.name || r.amount); });
+      bindShell();
+      render();
+    });
+    if (root.deferredPromptGlobal) S.deferredPrompt = root.deferredPromptGlobal;
+    if (location.protocol.startsWith('http') && 'serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    }
+  }
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    S.deferredPrompt = e;
+    if (S.view === 'settings') render();
+  });
+  root.KCD_app = { boot: boot, state: S, render: render, action: action, toast: KCD_toast };
+  if (typeof document !== 'undefined') {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  }
+})(typeof self !== 'undefined' ? self : this);
+</script>
+</body>
+</html>
